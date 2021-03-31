@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Route, Switch, Link } from "react-router-dom";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Content.scss';
 
-export default function Content() {
+export default function Content(props) {
+
     return (
         <Container fluid className="bimg-page-2">
             <Row className="h-100 gutter">
@@ -26,11 +27,7 @@ export default function Content() {
                         <Col className="col-3 pr-0 content-box">
                             <div className="h-100 b-color-1 b-radius-3">
                                 <ul className="list-group grp-1">
-                                    <li className="list-group-item">Cras justo odio</li>
-                                    <li className="list-group-item">Dapibus ac facilisis in</li>
-                                    <li className="list-group-item">Morbi leo risus</li>
-                                    <li className="list-group-item">Porta ac consectetur ac</li>
-                                    <li className="list-group-item">Vestibulum at eros</li>
+                                    {props.my_class}
                                 </ul>
                             </div>
                         </Col>
@@ -67,6 +64,7 @@ export default function Content() {
                     </Row>
                 </Col>
             </Row>
+
         </Container>
     )
 }

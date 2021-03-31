@@ -14,11 +14,12 @@
     bottom: 6%;
 }
 .bimg-page-1 {
-    background-image: url(../img/e-bg-1.png);
+    // background-image: url(../img/e-bg-1.png);
+    background-image: url(https://cdn.pixabay.com/photo/2016/10/21/14/50/plouzane-1758197_1280.jpg);
     background-repeat: no-repeat;
     background-position-y: center;
     background-position-x: center;
-    background-size: contain;
+    background-size: cover;
     background-origin: content-box;
     padding-left: 2rem;
     padding-right: 2rem;

@@ -8,7 +8,7 @@ export default function Header() {
     return (
         <Container fluid className="bimg-page-2">
             <Row className="h-100 gutter">
-                <Col className="col-9 logo-1"></Col>
+                <Col className="col-9 logo-1" style={{ opacity: '0.1' }}></Col>
                 <Col className="col-3 space-1">
                     <div className="b-orange h-100">
                         <div className="h-100 row space-2 m-0">

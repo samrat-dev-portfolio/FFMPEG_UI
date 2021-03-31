@@ -1,0 +1,28 @@
+.home_btn:hover { 
+    color: white;
+    text-decoration: none;
+}
+.home_btn { 
+    color: white;
+}
+body {
+    background-color: white;
+}
+.home_btn_row {
+    position: absolute;
+    right: 6%;
+    bottom: 6%;
+}
+.bimg-page-1 {
+    background-image: url(../img/e-bg-1.png);
+    background-repeat: no-repeat;
+    background-position-y: center;
+    background-position-x: center;
+    background-size: contain;
+    background-origin: content-box;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    min-height: 700px;
+    height: 100vh;
+    position: relative;
+}

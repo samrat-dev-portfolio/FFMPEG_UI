@@ -5,7 +5,7 @@
 .home_btn { 
     color: white;
 }
-body {
+.bimg-page-1 {
     background-color: white;
 }
 .home_btn_row {
@@ -25,4 +25,11 @@ body {
     min-height: 700px;
     height: 100vh;
     position: relative;
+}
+.btn-enter {
+    padding: 0;
+    height: 41px;
+     > a {
+        padding: .5rem 1.5rem;
+    }
 }

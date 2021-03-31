@@ -11,7 +11,7 @@ export default function Entry() {
                 <Col className="col-9"></Col>
                 <Col className="col-3 p-0">
                     <div className="home_btn_row">
-                        <Button variant="danger" size="lg">
+                        <Button variant="danger" size="lg" className="btn-enter">
                             <Link className="home_btn" to="/home">Enter</Link>
                         </Button>
                     </div>

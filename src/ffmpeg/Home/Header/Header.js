@@ -4,18 +4,18 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.scss';
 
-export default function Header() {
+export default function Header(props) {
     return (
         <Container fluid className="bimg-page-2">
             <Row className="h-100 gutter">
-                <Col className="col-9 logo-1" style={{ opacity: '0.1' }}></Col>
-                <Col className="col-3 space-1">
+                <Col className="col-6 logo-1" style={{ opacity: '0.1' }}></Col>
+                <Col className="col-6 space-1">
                     <div className="b-orange h-100">
                         <div className="h-100 row space-2 m-0">
-                            <div className="col-6 pr-0 b-red content-box c-white d-flex center-xy">
-                                pancham shreni
+                            <div className="col-4 pr-0 b-red content-box c-white d-flex center-xy">
+                                {props.selected_class}
                     </div>
-                            <div className="col-6 pl-0 b-green content-box c-white text-large-1 d-flex center-xy">
+                            <div className="col-8 pl-0 b-green content-box c-white d-flex center-xy">
                                 enregi
                     </div>
                         </div>

@@ -1,0 +1,14 @@
+.progress-1 {
+    position: absolute;
+    content: '';
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: #0000008f;
+    justify-content: center;
+    align-items: center;
+    color: wheat;
+    display: flex;
+    font-size: .9rem;
+    text-shadow: 3px 3px 4px #000000;
+}

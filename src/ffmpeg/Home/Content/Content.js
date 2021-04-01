@@ -3,6 +3,7 @@ import { Route, Switch, Link } from "react-router-dom";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Content.scss';
+import ProgressAlert from '../ProgressAlert/ProgressAlert';
 
 export default function Content(props) {
 
@@ -26,8 +27,8 @@ export default function Content(props) {
                     <Row className="h-100">
                         <Col className="col-3 pr-0 content-box">
                             {
-                                props.loading_class ?
-                                    <span className="progress-1" >Loading...</span> : null
+                                props.loading_class.enabled ?
+                                    <ProgressAlert alert={props.loading_class.alert} /> : null
                             }
                             <div className="h-100 b-color-1 b-radius-3">
                                 <ul className="list-group grp-1">
@@ -37,8 +38,8 @@ export default function Content(props) {
                         </Col>
                         <Col className="col-3 pr-0 content-box">
                             {
-                                props.loading_subject ?
-                                    <span className="progress-1" >Loading...</span> : null
+                                props.loading_subject.enabled ?
+                                    <ProgressAlert alert={props.loading_subject.alert} /> : null
                             }
                             <div className="h-100 b-color-1 b-radius-3">
                                 <ul className="list-group grp-2">
@@ -47,22 +48,12 @@ export default function Content(props) {
                             </div>
                         </Col>
                         <Col className="col-6 pr-0 content-box">
+                            {
+                                props.loading_chapter.enabled ?
+                                    <ProgressAlert alert={props.loading_chapter.alert} /> : null
+                            }
                             <ul className="list-group grp-3">
-                                <li className="list-group-item">Cras justo odio</li>
-                                <li className="list-group-item">Dapibus ac facilisis in</li>
-                                <li className="list-group-item">Morbi leo risus</li>
-                                <li className="list-group-item">Porta ac consectetur ac</li>
-                                <li className="list-group-item">Vestibulum at eros</li>
-                                <li className="list-group-item">Cras justo odio</li>
-                                <li className="list-group-item">Dapibus ac facilisis in</li>
-                                <li className="list-group-item">Morbi leo risus</li>
-                                <li className="list-group-item">Porta ac consectetur ac</li>
-                                <li className="list-group-item">Vestibulum at eros</li>
-                                <li className="list-group-item">Cras justo odio</li>
-                                <li className="list-group-item">Dapibus ac facilisis in</li>
-                                <li className="list-group-item">Morbi leo risus</li>
-                                <li className="list-group-item">Porta ac consectetur ac</li>
-                                <li className="list-group-item">Vestibulum at eros</li>
+                                {props.my_chapter}
                             </ul>
                         </Col>
                     </Row>

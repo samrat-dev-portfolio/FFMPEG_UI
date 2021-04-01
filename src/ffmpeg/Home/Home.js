@@ -14,6 +14,7 @@ export default function Home(props) {
     const [getClasses, setClasses] = useState([]);
     const [getSelectedClass, setSelectedClass] = useState('');
     const [getSelectedClassName, setSelectedClassName] = useState('');
+    const [getSelectedChapterName, setSelectedChapterName] = useState('');
 
     const [getLoading_subject, setLoading_subject] = useState({ enabled: false, alert: '' });
     const [getSubjects, setSubjects] = useState([]);
@@ -33,12 +34,21 @@ export default function Home(props) {
         const cls = query.get('cls');
         if (cls)
             setSelectedClass(cls);
+
         const sub = query.get('sub');
         if (sub)
             setSelectedSubject(sub);
+
+        const cls_name = query.get('cls_name');
+        if (cls_name)
+            setSelectedClassName(cls_name);
+        const chap_name = query.get('chap_name');
+        if (chap_name) {
+            setSelectedChapterName(chap_name);
+        }
     }, []);
     useEffect(() => {
-        props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}`);
+        urlParamCreation();
         if (getSelectedClass && getSelectedSubject) {
             // console.log('change class, sub, load chapter');
             loadChapter();
@@ -46,6 +56,9 @@ export default function Home(props) {
             setLoading_chapter({ enabled: true, alert: 'Please Provide Class and subject' });
         }
     }, [getSelectedClass, getSelectedSubject]);
+    useEffect(() => {
+        urlParamCreation();
+    }, [getSelectedChapterName]);
     //#endregion
 
     //#region Load API
@@ -111,7 +124,7 @@ export default function Home(props) {
     const getChapters_view = () => {
         let data = [];
         data = getChapters.map((item, index) => {
-            return <li key={index} className="list-group-item" onClick={() => { click_chapterItem(item) }}>{item.chapterName}</li>;
+            return <li key={index} className="list-group-item" onClick={(e) => { click_chapterItem(e, item) }}>{item.chapterName}</li>;
         });
         return data;
     };
@@ -122,20 +135,30 @@ export default function Home(props) {
     const click_subjectItem = (_item) => {
         setSelectedSubject(_item.id);
     };
-    const click_chapterItem = (_item) => {
-        console.log(_item);
+    const click_chapterItem = (_e, _item) => {
+        setSelectedChapterName(_item.chapterName);
+        highlight(_e, 'chapter_highlight');
     };
+    const highlight = (_e, _className) => {
+        var _target = _e.target;
+        document.querySelectorAll('.' + _className).forEach(i => {
+            i.classList.remove(_className);
+        });
+        _target.classList.add(_className);
+    };
+    const urlParamCreation = () => {
+        props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);
+    }
     //#endregion
 
     return (
         <>
-            <Header selected_class={getSelectedClassName} />
+            <Header selected_class={getSelectedClassName} selected_chapter={getSelectedChapterName} />
             <Content
                 my_class={getClasses_view()} loading_class={getLoading_class}
                 my_subject={getSubjects_view()} loading_subject={getLoading_subject}
                 my_chapter={getChapters_view()} loading_chapter={getLoading_chapter}
             />
-            Class: {getSelectedClass}, subject: {getSelectedSubject}
         </>
     )
 }

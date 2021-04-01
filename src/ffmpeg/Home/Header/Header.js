@@ -16,7 +16,7 @@ export default function Header(props) {
                                 {props.selected_class}
                     </div>
                             <div className="col-8 pl-0 b-green content-box c-white d-flex center-xy">
-                                enregi
+                                {props.selected_chapter}
                     </div>
                         </div>
                     </div>

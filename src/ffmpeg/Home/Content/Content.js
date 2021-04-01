@@ -25,6 +25,11 @@ export default function Content(props) {
                 <Col className="col-12 b-red b-radius-2 space-3">
                     <Row className="h-100">
                         <Col className="col-3 pr-0 content-box">
+                            {
+                                props.loading_class ?
+                                    <span className="progress-1" >Loading...</span> : null
+                            }
+
                             <div className="h-100 b-color-1 b-radius-3">
                                 <ul className="list-group grp-1">
                                     {props.my_class}

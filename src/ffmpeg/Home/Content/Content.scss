@@ -15,3 +15,17 @@
 .b-color-1 {
     background-color: #f7ae80;
 }
+.progress-1 {
+    position: absolute;
+    content: '';
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: #0000008f;
+    justify-content: center;
+    align-items: center;
+    color: wheat;
+    display: flex;
+    font-size: 1.2rem;
+    text-shadow: 3px 3px 4px #000000;
+}

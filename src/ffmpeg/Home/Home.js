@@ -9,24 +9,38 @@ import axios from 'axios';
 
 export default function Home(props) {
     const baseurl = window.ffmpeg_baseurl;
-    const [getClasses, setClasses] = useState([]);
-    const [getSelectedClass, setSelectedClass] = useState();
+
     const [getLoading_class, setLoading_class] = useState(false);
+    const [getClasses, setClasses] = useState([]);
+    const [getSelectedClass, setSelectedClass] = useState('');
+
+    const [getLoading_subject, setLoading_subject] = useState(false);
+    const [getSubjects, setSubjects] = useState([]);
+    const [getSelectedSubject, setSelectedSubject] = useState('');
+
     // Similar to componentDidMount and componentDidUpdate:
     // https://www.digitalocean.com/community/tutorials/react-axios-react
 
+    //#region Hooks 
     useEffect(() => {
         loadClasses();
+        loadSubject();
         const query = new URLSearchParams(props.location.search);
-        const my_class = query.get('my_class');
-        if (my_class)
-            setSelectedClass(my_class);
+        const cls = query.get('cls');
+        if (cls)
+            setSelectedClass(cls);
+        const sub = query.get('sub');
+        if (sub)
+            setSelectedSubject(sub);
 
     }, []);
     useEffect(() => {
-        if (getSelectedClass)
-            loadSubject();
-    }, [getSelectedClass]);
+        props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}`);
+        if (getSelectedClass && getSelectedSubject) {
+            console.log('change class, sub, load chapter');
+        }
+    }, [getSelectedClass, getSelectedSubject]);
+    //#endregion
 
     //#region Load API
     const loadClasses = () => {
@@ -41,19 +55,31 @@ export default function Home(props) {
             });
     };
     const loadSubject = () => {
-        console.log('loadSubject');
-        axios.get(`${baseurl}api/mpeg/getSubject`, {
-            params: {
-                class_id: getSelectedClass
-            }
-        })
+        setLoading_subject(true);
+        axios.get(`${baseurl}api/mpeg/getSubject`)
             .then(res => {
-                // setClasses(res.data.data);
-                console.log(res.data);
+                setSubjects(res.data.data);
+                setLoading_subject(false);
+                // console.log(res.data.data);
+            }).catch(err => {
+                setLoading_subject(false);
             });
-    }
-
+    };
+    const loadChapter = () => {
+        console.log('loadChapter');
+        // axios.get(`${baseurl}api/mpeg/getSubject`, {
+        //     params: {
+        //         class_id: getSelectedClass
+        //     }
+        // })
+        //     .then(res => {
+        //         // setClasses(res.data.data);
+        //         console.log(res.data);
+        //     });
+    };
     //#endregion
+
+    //#region Create List View
     const getClasses_view = () => {
         let data = [];
         data = getClasses.map((item, index) => {
@@ -61,16 +87,29 @@ export default function Home(props) {
         });
         return data;
     };
-    const click_classItem = (_id) => {
-        // let query = JSON.stringify({ "class_id": _id });
-        setSelectedClass(_id);
-        props.history.push('/home?my_class=' + _id);
+    const getSubjects_view = () => {
+        let data = [];
+        data = getSubjects.map((item, index) => {
+            return <li key={index} className="list-group-item" onClick={() => { click_subjectItem(item.id) }}>{item.subjectName}</li>;
+        });
+        return data;
     };
+    const click_classItem = (_id) => {
+        setSelectedClass(_id);
+    };
+    const click_subjectItem = (_id) => {
+        setSelectedSubject(_id);
+    };
+    //#endregion
 
     return (
         <>
             <Header />
-            <Content my_class={getClasses_view()} loading_class={getLoading_class} />
+            <Content
+                my_class={getClasses_view()} loading_class={getLoading_class}
+                my_subject={getSubjects_view()} loading_subject={getLoading_subject}
+            />
+            Class: {getSelectedClass}, subject: {getSelectedSubject}
         </>
     )
 }

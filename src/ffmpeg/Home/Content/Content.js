@@ -29,7 +29,6 @@ export default function Content(props) {
                                 props.loading_class ?
                                     <span className="progress-1" >Loading...</span> : null
                             }
-
                             <div className="h-100 b-color-1 b-radius-3">
                                 <ul className="list-group grp-1">
                                     {props.my_class}
@@ -37,13 +36,13 @@ export default function Content(props) {
                             </div>
                         </Col>
                         <Col className="col-3 pr-0 content-box">
+                            {
+                                props.loading_subject ?
+                                    <span className="progress-1" >Loading...</span> : null
+                            }
                             <div className="h-100 b-color-1 b-radius-3">
                                 <ul className="list-group grp-2">
-                                    <li className="list-group-item">Cras justo odio</li>
-                                    <li className="list-group-item">Dapibus ac facilisis in</li>
-                                    <li className="list-group-item">Morbi leo risus</li>
-                                    <li className="list-group-item">Porta ac consectetur ac</li>
-                                    <li className="list-group-item">Vestibulum at eros</li>
+                                    {props.my_subject}
                                 </ul>
                             </div>
                         </Col>

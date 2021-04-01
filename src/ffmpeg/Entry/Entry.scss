@@ -1,28 +1,26 @@
-.home_btn:hover { 
+.home_btn:hover {
     color: white;
     text-decoration: none;
 }
-.home_btn { 
+.home_btn {
     color: white;
-}
-.bimg-page-1 {
-    background-color: white;
 }
 .home_btn_row {
     position: absolute;
     right: 6%;
     bottom: 6%;
 }
+
 .bimg-page-1 {
+    background-color: rgb(0, 0, 0);
+    background-image: url(https://cdn.pixabay.com/photo/2021/03/25/09/10/man-6122484_1280.jpg);
+    background-size: cover;
     // background-image: url(../img/e-bg-1.png);
-    background-image: url(https://cdn.pixabay.com/photo/2016/10/21/14/50/plouzane-1758197_1280.jpg);
+    // background-size: 80% auto;
     background-repeat: no-repeat;
     background-position-y: center;
     background-position-x: center;
-    background-size: cover;
     background-origin: content-box;
-    padding-left: 2rem;
-    padding-right: 2rem;
     min-height: 700px;
     height: 100vh;
     position: relative;
@@ -30,7 +28,7 @@
 .btn-enter {
     padding: 0;
     height: 41px;
-     > a {
-        padding: .5rem 1.5rem;
+    > a {
+        padding: 0.5rem 1.5rem;
     }
 }

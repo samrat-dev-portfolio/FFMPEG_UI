@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import './Admin.scss';
+import Menubar from './Menubar/Menubar';
 
 export default function Admin() {
-    useEffect(() => { 
+    useEffect(() => {
         body_blue_reset();
     });
 
@@ -12,9 +13,8 @@ export default function Admin() {
     };
 
     return (
-        <div className="C_Admin book">
-           Admin page
-
+        <div className="C_Admin">
+            <Menubar />
         </div>
     )
 }

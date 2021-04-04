@@ -14,10 +14,10 @@ export default function Header(props) {
                         <div className="h-100 row space-2 m-0">
                             <div className="col-4 pr-0 b-red content-box c-white d-flex center-xy">
                                 {props.selected_class}
-                    </div>
+                            </div>
                             <div className="col-8 pl-0 b-green content-box c-white d-flex center-xy">
                                 {props.selected_chapter}
-                    </div>
+                            </div>
                         </div>
                     </div>
                 </Col>

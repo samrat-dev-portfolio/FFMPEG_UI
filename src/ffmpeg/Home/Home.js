@@ -28,6 +28,7 @@ export default function Home(props) {
 
     //#region Hooks 
     useEffect(() => {
+        body_blue();
         loadClasses();
         loadSubject();
         const query = new URLSearchParams(props.location.search);
@@ -145,6 +146,9 @@ export default function Home(props) {
             i.classList.remove(_className);
         });
         _target.classList.add(_className);
+    };
+    const body_blue = () => {
+        document.body.classList.add('body-blue');
     };
     const urlParamCreation = () => {
         props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);

@@ -8,8 +8,8 @@ import ProgressAlert from '../ProgressAlert/ProgressAlert';
 export default function Content(props) {
 
     return (
-        <Container fluid className="bimg-page-2">
-            <Row className="h-100 gutter">
+        <Container fluid className="C_Content bimg-page-2 p-0">
+            <Row className="h-100 gutter m-0">
                 <Col className="col-12 b-orange py-1 b-radius-1 shadow-1">
                     <Row>
                         <Col className="col-2 pl-4">
@@ -24,7 +24,7 @@ export default function Content(props) {
                     </Row>
                 </Col>
                 <Col className="col-12 b-red b-radius-2 space-3">
-                    <Row className="h-100">
+                    <Row className="h-100 m-0">
                         <Col className="col-2 pr-0 content-box">
                             {
                                 props.loading_class.enabled ?

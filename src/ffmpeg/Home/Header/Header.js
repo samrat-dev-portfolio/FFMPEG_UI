@@ -6,9 +6,9 @@ import './Header.scss';
 
 export default function Header(props) {
     return (
-        <Container fluid className="bimg-page-2">
-            <Row className="h-100 gutter">
-                <Col className="col-6 logo-1" style={{ opacity: '0.1' }}></Col>
+        <Container fluid className="C_Header bimg-page-2 p-0">
+            <Row className="h-100 gutter m-0">
+                <Col className="col-6 logo-1"></Col>
                 <Col className="col-6 space-1">
                     <div className="b-orange h-100">
                         <div className="h-100 row space-2 m-0">

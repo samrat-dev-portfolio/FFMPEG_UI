@@ -3,7 +3,7 @@ import './ProgressAlert.scss';
 
 export default function ProgressAlert(props) {
     return (
-        <span className="progress-1" >
+        <span className="C_ProgressAlert progress-1" >
             {props.alert}
         </span>
     )

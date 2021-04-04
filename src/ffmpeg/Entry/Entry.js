@@ -6,7 +6,7 @@ import './Entry.scss';
 
 export default function Entry() {
     return (
-        <Container fluid className="bimg-page-1">
+        <Container fluid className="C_Entry bimg-page-1">
             <Row className="h-100">
                 <Col className="col-9"></Col>
                 <Col className="col-3 p-0">

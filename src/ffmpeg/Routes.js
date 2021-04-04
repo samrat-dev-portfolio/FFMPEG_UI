@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './ffmpeg.scss';
 import Entry from "./Entry/Entry";
 import Home from "./Home/Home";
+import Admin from "./Admin/Admin";
 
 export default function Routes(props) {
     return (
@@ -16,6 +17,7 @@ export default function Routes(props) {
             </Route>
             <Switch>
                 <Route path="/home" exact component={Home} />
+                <Route path="/admin" exact component={Admin} />
             </Switch>
         </>
     );

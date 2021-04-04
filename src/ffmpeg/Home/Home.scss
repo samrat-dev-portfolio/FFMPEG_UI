@@ -1,6 +1,16 @@
 .chapter_highlight {
-    color: red;
+    color: #007bff;
+    background-image: linear-gradient(#fdc761, #e29e1e, #fdc761) !important;
+    transition: 0.5s ease;
 }
-.chapter_highlight {
-    color: red;
+.list-group-item {
+    transition: 0.5s ease;
+}
+.grp-3 .list-group-item:hover {
+    color: #007bff;
+    background-image: linear-gradient(#fdc761, #e29e1e, #fdc761) !important;
+}
+
+.body-blue {
+    background-color: #4795d4;
 }

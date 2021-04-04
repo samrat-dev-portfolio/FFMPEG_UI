@@ -1,0 +1,11 @@
+.C_Loading {
+    width: 45px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    > svg {
+        margin: auto;
+        display: block;
+        shape-rendering: auto;
+    }
+}

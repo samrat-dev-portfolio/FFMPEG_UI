@@ -8,10 +8,13 @@ import Loading from '../Loading/Loading';
 export default function Upload() {
     const baseurl = window.ffmpeg_baseurl;
     const [getIsLoading, setIsLoading] = useState(false);
+    const [getError, setError] = useState('');
     const [getUnique_ID, setUnique_ID] = useState('');
+
     const [getContent_file_label, setContent_file_label] = useState('');
     const [getContent_file_alert, setContent_file_alert] = useState('');
     const [getContent_file, setContent_file] = useState(null);
+    const [getFile_Title, setFile_Title] = useState('fgnm');
 
     const [validated, setValidated] = useState(false);
     //#region Hooks 
@@ -25,12 +28,15 @@ export default function Upload() {
     //#region Load API
     const loadUnique_ID = () => {
         setIsLoading(true);
+        setError('');
         axios.get(`${baseurl}api/mpeg/UniquID`)
             .then(res => {
                 setUnique_ID(res.data.Id);
                 setIsLoading(false);
                 // console.log(res.data.Id);
             }).catch(err => {
+                setError('Error load unique ID');
+                setIsLoading(false);
             });
     };
     //#endregion
@@ -56,6 +62,11 @@ export default function Upload() {
         var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
+    const UploadProgress = (progressEvent) => {
+        var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        console.log(percentCompleted);
+        // onUploadProgress: function (progressEvent) {}
+    };
     const handleSubmit = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -65,6 +76,25 @@ export default function Upload() {
             console.log(" Not Ready");
         } else {
             console.log("Ready for upload to server");
+            let formData = new FormData();
+            formData.append('body', getContent_file);
+            formData.append('uid', getUnique_ID);
+            formData.append('file_name', getContent_file_label);
+            formData.append('file_title', getFile_Title);
+            // console.log(formData);
+
+            const data = { uid: getUnique_ID, file_name: getContent_file_label, file_title: getFile_Title };
+            const config = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                }                
+            };
+            axios.post(`${baseurl}api/Mpeg/UploadFile`, formData, config).then(function (res) {
+                console.log('SUCCESS!!');
+                console.log(res);
+            }).catch(err => {
+                setError('Error post data');
+            });
         }
         setValidated(true);
     };
@@ -75,7 +105,7 @@ export default function Upload() {
                 <Col className="col-md-6 pt-3">
                     <Card bg="light" text="dark" border="secondary">
                         <Card.Header>
-                            Upload File
+                            Upload File <span className="loading-error">{getError}</span>
                             {
                                 getIsLoading ? <Loading /> : null
                             }
@@ -89,7 +119,9 @@ export default function Upload() {
                                 </Form.Group>
                                 <Form.Group controlId="File_Title">
                                     <Form.Label>File Title</Form.Label>
-                                    <Form.Control type="text" autoComplete="off" placeholder="File title" required />
+                                    <Form.Control type="text" autoComplete="off" placeholder="File title" required
+                                        defaultValue={getFile_Title}
+                                        onChange={(e) => { setFile_Title(e.target.value); }} />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>

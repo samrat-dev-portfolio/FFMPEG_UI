@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Col, Container, Form, Row, Card } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Card, ProgressBar } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Upload.scss';
 import axios from 'axios';
@@ -14,7 +14,8 @@ export default function Upload() {
     const [getContent_file_label, setContent_file_label] = useState('');
     const [getContent_file_alert, setContent_file_alert] = useState('');
     const [getContent_file, setContent_file] = useState(null);
-    const [getFile_Title, setFile_Title] = useState('fgnm');
+    const [getFile_Title, setFile_Title] = useState('');
+    const [getFile_UploadProgress, setFile_UploadProgress] = useState(0);
 
     const [validated, setValidated] = useState(false);
     //#region Hooks 
@@ -64,16 +65,20 @@ export default function Upload() {
     };
     const UploadProgress = (progressEvent) => {
         var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        console.log(percentCompleted);
-        // onUploadProgress: function (progressEvent) {}
+        setFile_UploadProgress(percentCompleted);
+        // console.log(percentCompleted);
+        // onUploadProgress: function (progressEvent) { UploadProgress(progressEvent); }
     };
     const handleSubmit = (event) => {
+        setError('');
+        setIsLoading(true);
         event.preventDefault();
         event.stopPropagation();
         const form = event.currentTarget;
         const isValid = form.checkValidity();
         if (isValid === false) {
-            console.log(" Not Ready");
+            setError("Please provide all field");
+            setIsLoading(false);
         } else {
             console.log("Ready for upload to server");
             let formData = new FormData();
@@ -87,16 +92,27 @@ export default function Upload() {
             const config = {
                 headers: {
                     'content-type': 'multipart/form-data',
-                }                
+                },
+                onUploadProgress: function (progressEvent) { UploadProgress(progressEvent); }
             };
             axios.post(`${baseurl}api/Mpeg/UploadFile`, formData, config).then(function (res) {
-                console.log('SUCCESS!!');
-                console.log(res);
+                setError('SUCCESS!!');
+                setIsLoading(false);
+                // console.log(res);
+                //ResetAll();
             }).catch(err => {
                 setError('Error post data');
+                setIsLoading(false);
             });
         }
         setValidated(true);
+    };
+    const ResetAll = () => {
+        setError('');
+        loadUnique_ID();
+        setFile_Title('');
+        getContent_file_label('');
+        getContent_file(null);
     };
 
     return (
@@ -135,6 +151,7 @@ export default function Upload() {
                                             {getContent_file_alert}
                                         </Form.Text>
                                     </Form.File>
+                                    <ProgressBar variant="success" animated now={getFile_UploadProgress} />
                                 </Form.Group>
                                 <Button type="submit">Submit form</Button>
                             </Form>

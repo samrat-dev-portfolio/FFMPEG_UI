@@ -15,8 +15,8 @@ export default function Routes(props) {
         <>
             <Route path="/" exact>
                 {
-                    //  <Entry />
-                    <Upload />
+                     <Entry />
+                    // <Upload />
                 }
             </Route>
             <Route path="/admin" component={Admin} />

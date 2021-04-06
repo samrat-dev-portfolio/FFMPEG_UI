@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Col, Container, Form, Row, Card, ProgressBar } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Upload.scss';
@@ -18,6 +18,8 @@ export default function Upload() {
     const [getFile_UploadProgress, setFile_UploadProgress] = useState(0);
 
     const [validated, setValidated] = useState(false);
+    const titleRef = useRef();
+
     //#region Hooks 
     useEffect(() => {
         setContent_file_label('Select any MP4 file');
@@ -44,16 +46,18 @@ export default function Upload() {
 
     const change_file = (event) => {
         if (event.currentTarget.files) {
-            const { size, type, name } = event.currentTarget.files[0];
-            console.log(type);
-            if ("video" != type.split('/')[0]) {
-                setContent_file_alert("Please select video file");
-                setContent_file_label('Select any MP4 file');
-            } else {
-                setContent_file_alert("Size: " + bytesToSize(size));
-                setContent_file_label(name);
-                setContent_file(event.currentTarget.files[0]);
-                // console.log(event.currentTarget.files[0]);
+            if (event.currentTarget.files.length) {
+                const { size, type, name } = event.currentTarget.files[0];
+                // console.log(type);
+                if ("video" != type.split('/')[0]) {
+                    setContent_file_alert("Please select video file");
+                    setContent_file_label('Select any MP4 file');
+                } else {
+                    setContent_file_alert("Size: " + bytesToSize(size));
+                    setContent_file_label(name);
+                    setContent_file(event.currentTarget.files[0]);
+                    // console.log(event.currentTarget.files[0]);
+                }
             }
         }
     };
@@ -99,7 +103,7 @@ export default function Upload() {
                 setError('SUCCESS!!');
                 setIsLoading(false);
                 // console.log(res);
-                //ResetAll();
+                ResetAll();
             }).catch(err => {
                 setError('Error post data');
                 setIsLoading(false);
@@ -108,17 +112,22 @@ export default function Upload() {
         setValidated(true);
     };
     const ResetAll = () => {
-        setError('');
-        loadUnique_ID();
-        setFile_Title('');
-        getContent_file_label('');
-        getContent_file(null);
+        setTimeout(() => {
+            loadUnique_ID();
+            setContent_file_alert('');
+            setContent_file_label('Select any MP4 file');
+            setContent_file(null);
+            setFile_UploadProgress(0);
+            titleRef.current.value = "";
+            document.querySelector("#content_file").value = '';
+            setValidated(false);
+        }, 1000, true);
     };
 
     return (
         <Container fluid className="C_Upload">
             <Row className="h-100 m-0">
-                <Col className="col-md-6 pt-3">
+                <Col className="col-md-8 col-lg-6 pt-3">
                     <Card bg="light" text="dark" border="secondary">
                         <Card.Header>
                             Upload File <span className="loading-error">{getError}</span>
@@ -137,7 +146,7 @@ export default function Upload() {
                                     <Form.Label>File Title</Form.Label>
                                     <Form.Control type="text" autoComplete="off" placeholder="File title" required
                                         defaultValue={getFile_Title}
-                                        onChange={(e) => { setFile_Title(e.target.value); }} />
+                                        onChange={(e) => { setFile_Title(e.target.value); }} ref={titleRef} />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group>
@@ -153,7 +162,7 @@ export default function Upload() {
                                     </Form.File>
                                     <ProgressBar variant="success" animated now={getFile_UploadProgress} />
                                 </Form.Group>
-                                <Button type="submit">Submit form</Button>
+                                <Button type="submit">Submit</Button>
                             </Form>
                         </Card.Body>
                     </Card>

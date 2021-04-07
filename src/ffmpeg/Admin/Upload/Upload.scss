@@ -1,3 +1,24 @@
 .progress {
     background-color: transparent;
 }
+.dragdrop-frm-group {
+    border: 1px solid #bababa;
+    box-shadow: inset 0px 0px 7px 1px #bfbaba;
+    display: flex;
+    border-radius: .71rem;
+    > div {
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        p {
+            margin: 0;
+            padding: 1rem 0;
+        }
+        &:focus {
+            outline: 0;
+        }
+    }
+}

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button, Col, Container, Form, Row, Card, ProgressBar } from "react-bootstrap";
+import { useDropzone } from 'react-dropzone';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Upload.scss';
 import axios from 'axios';
@@ -16,22 +17,33 @@ export default function Upload() {
     const [getContent_file, setContent_file] = useState(null);
     const [getFile_Title, setFile_Title] = useState('');
     const [getFile_UploadProgress, setFile_UploadProgress] = useState(0);
+    const [getCancelToken, setCancelToken] = useState(null);
 
     const [validated, setValidated] = useState(false);
     const titleRef = useRef();
 
-    //#region Hooks 
     useEffect(() => {
         setContent_file_label('Select any MP4 file');
         loadUnique_ID();
     }, []);
-
-    //#endregion
-
-    //#region Load API
+    const onDrop = useCallback(acceptedFiles => {
+        if (acceptedFiles.length) {
+            const { size, type, name } = acceptedFiles[0];
+            console.log(acceptedFiles[0]);
+            if ("video" != type.split('/')[0]) {
+                setContent_file_alert("Please select video file");
+                setContent_file_label('Select any MP4 file');
+            } else {
+                document.getElementById("content_file").removeAttribute('required');
+                setContent_file_alert("Size: " + bytesToSize(size));
+                setContent_file_label(name);
+                setContent_file(acceptedFiles[0]);
+            }
+        }
+    }, []);
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false });
     const loadUnique_ID = () => {
         setIsLoading(true);
-        setError('');
         axios.get(`${baseurl}api/mpeg/UniquID`)
             .then(res => {
                 setUnique_ID(res.data.Id);
@@ -42,13 +54,11 @@ export default function Upload() {
                 setIsLoading(false);
             });
     };
-    //#endregion
 
     const change_file = (event) => {
         if (event.currentTarget.files) {
             if (event.currentTarget.files.length) {
                 const { size, type, name } = event.currentTarget.files[0];
-                // console.log(type);
                 if ("video" != type.split('/')[0]) {
                     setContent_file_alert("Please select video file");
                     setContent_file_label('Select any MP4 file');
@@ -56,7 +66,6 @@ export default function Upload() {
                     setContent_file_alert("Size: " + bytesToSize(size));
                     setContent_file_label(name);
                     setContent_file(event.currentTarget.files[0]);
-                    // console.log(event.currentTarget.files[0]);
                 }
             }
         }
@@ -70,8 +79,6 @@ export default function Upload() {
     const UploadProgress = (progressEvent) => {
         var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
         setFile_UploadProgress(percentCompleted);
-        // console.log(percentCompleted);
-        // onUploadProgress: function (progressEvent) { UploadProgress(progressEvent); }
     };
     const handleSubmit = (event) => {
         setError('');
@@ -90,17 +97,21 @@ export default function Upload() {
             formData.append('uid', getUnique_ID);
             formData.append('file_name', getContent_file_label);
             formData.append('file_title', getFile_Title);
-            // console.log(formData);
 
             const data = { uid: getUnique_ID, file_name: getContent_file_label, file_title: getFile_Title };
+            const CancelToken = axios.CancelToken;
+            const source = CancelToken.source();
+            setCancelToken(source);
             const config = {
                 headers: {
                     'content-type': 'multipart/form-data',
                 },
+                cancelToken: source.token,
                 onUploadProgress: function (progressEvent) { UploadProgress(progressEvent); }
             };
+
             axios.post(`${baseurl}api/Mpeg/UploadFile`, formData, config).then(function (res) {
-                setError('SUCCESS!!');
+                setError('File uploaded successfully.');
                 setIsLoading(false);
                 // console.log(res);
                 ResetAll();
@@ -111,6 +122,12 @@ export default function Upload() {
         }
         setValidated(true);
     };
+    const Cancelupload = () => {
+        if (getCancelToken != null) {
+            getCancelToken.cancel();
+            ResetAll();
+        }
+    };
     const ResetAll = () => {
         setTimeout(() => {
             loadUnique_ID();
@@ -120,7 +137,9 @@ export default function Upload() {
             setFile_UploadProgress(0);
             titleRef.current.value = "";
             document.querySelector("#content_file").value = '';
+            document.getElementById("content_file").setAttribute('required', '');
             setValidated(false);
+            setCancelToken(null);
         }, 1000, true);
     };
 
@@ -128,7 +147,7 @@ export default function Upload() {
         <Container fluid className="C_Upload">
             <Row className="h-100 m-0">
                 <Col className="col-md-8 col-lg-6 pt-3">
-                    <Card bg="light" text="dark" border="secondary">
+                    <Card bg="light" text="dark" border="secondary" >
                         <Card.Header>
                             Upload File <span className="loading-error">{getError}</span>
                             {
@@ -149,7 +168,7 @@ export default function Upload() {
                                         onChange={(e) => { setFile_Title(e.target.value); }} ref={titleRef} />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 </Form.Group>
-                                <Form.Group>
+                                <Form.Group className="mb-0">
                                     <Form.Label>Choose File</Form.Label>
                                     <Form.File name="content_file" id="content_file" custom>
                                         <Form.File.Input required onChange={change_file} />
@@ -162,7 +181,14 @@ export default function Upload() {
                                     </Form.File>
                                     <ProgressBar variant="success" animated now={getFile_UploadProgress} />
                                 </Form.Group>
+                                <Form.Group className="dragdrop-frm-group">
+                                    <div {...getRootProps()}>
+                                        <input id="content_file_drop" {...getInputProps()} />
+                                        <p>Drag 'n' drop some file here, or click to select files</p>
+                                    </div>
+                                </Form.Group>
                                 <Button type="submit">Submit</Button>
+                                <Button className="ml-2" type="button" onClick={Cancelupload}>Cancel Upload</Button>
                             </Form>
                         </Card.Body>
                     </Card>

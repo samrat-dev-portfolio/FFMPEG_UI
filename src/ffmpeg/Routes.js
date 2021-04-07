@@ -9,13 +9,14 @@ import Entry from "./Entry/Entry";
 import Home from "./Home/Home";
 import Admin from "./Admin/Admin";
 import Upload from "./Admin/Upload/Upload";
+import Conversion from "./Admin/Conversion/Conversion";
 
 export default function Routes(props) {
     return (
         <>
             <Route path="/" exact>
                 {
-                     <Entry />
+                    <Entry />
                     // <Upload />
                 }
             </Route>
@@ -23,7 +24,7 @@ export default function Routes(props) {
             <Switch>
                 <Route path="/home" exact component={Home} />
                 <Route path="/admin/upload" exact component={Upload} />
-                <Route path="/admin/conversion" exact render={() => { return <h3>Start Conversion</h3> }} />
+                <Route path="/admin/conversion" exact component={Conversion} />
                 <Route path="/admin/playfiles" exact render={() => { return <h3>Play Conversion Files</h3> }} />
                 <Route path="/admin/addcls" exact render={() => { return <h3>add Class</h3> }} />
                 <Route path="/admin/addsub" exact render={() => { return <h3>add Subject</h3> }} />

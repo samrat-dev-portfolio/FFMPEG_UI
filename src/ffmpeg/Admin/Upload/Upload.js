@@ -29,7 +29,7 @@ export default function Upload() {
     const onDrop = useCallback(acceptedFiles => {
         if (acceptedFiles.length) {
             const { size, type, name } = acceptedFiles[0];
-            console.log(acceptedFiles[0]);
+            // console.log(acceptedFiles[0]);
             if ("video" != type.split('/')[0]) {
                 setContent_file_alert("Please select video file");
                 setContent_file_label('Select any MP4 file');
@@ -113,8 +113,8 @@ export default function Upload() {
             axios.post(`${baseurl}api/Mpeg/UploadFile`, formData, config).then(function (res) {
                 setError('File uploaded successfully.');
                 setIsLoading(false);
-                // console.log(res);
                 ResetAll();
+                console.log(res);
             }).catch(err => {
                 setError('Error post data');
                 setIsLoading(false);

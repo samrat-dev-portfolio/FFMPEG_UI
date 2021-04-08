@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Container, Col, Row, Table, Button, InputGroup, FormControl, Pagination } from 'react-bootstrap';
+import { Container, Col, Row, Table, Button, InputGroup, FormControl, Pagination, Dropdown, ButtonGroup } from 'react-bootstrap';
 import './Conversion.scss';
 
 export default function Conversion(props) {
@@ -56,7 +56,30 @@ export default function Conversion(props) {
                                             />
                                         </InputGroup>
                                     </div></th>
-                                <th>Action</th>
+                                <th>
+                                    <div className="td-filter-box">
+                                        Action
+                                        <Dropdown>
+                                            <Dropdown.Toggle size="sm" variant="light" id="dropdown-basic">
+                                                Sort By &nbsp;&nbsp;
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item href="#">
+                                                    <ButtonGroup size="sm">
+                                                        <Button className="mr-1">ID</Button>
+                                                        <Button>Desc</Button>
+                                                    </ButtonGroup>
+                                                </Dropdown.Item>
+                                                <Dropdown.Item href="#">
+                                                    <ButtonGroup size="sm">
+                                                        <Button className="mr-1">File Name</Button>
+                                                        <Button>Desc</Button>
+                                                    </ButtonGroup>
+                                                </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>

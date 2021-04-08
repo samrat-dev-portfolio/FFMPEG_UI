@@ -25,10 +25,8 @@ export default function Routes(props) {
                 <Route path="/home" exact component={Home} />
                 <Route path="/admin/upload" exact component={Upload} />
                 <Route path="/admin/conversion" exact component={Conversion} />
-                <Route path="/admin/playfiles" exact render={() => { return <h3>Play Conversion Files</h3> }} />
-                <Route path="/admin/addcls" exact render={() => { return <h3>add Class</h3> }} />
-                <Route path="/admin/addsub" exact render={() => { return <h3>add Subject</h3> }} />
-                <Route path="/admin/addchap" exact render={() => { return <h3>add Chapter</h3> }} />
+                <Route path="/admin/addclsnsub" exact render={() => { return <h3>add Classes N Subjects</h3> }} />
+                <Route path="/admin/mapchap" exact render={() => { return <h3>Mapping Chapter</h3> }} />
                 <Route path="/admin/mapping" exact render={() => { return <h3>Mapping Chapter - Video</h3> }} />
             </Switch>
         </>

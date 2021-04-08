@@ -16,13 +16,10 @@ export default function Menubar() {
                     <NavDropdown title="MP4" id="basic-nav-dropdown">
                         <NavDropdown.Item href="#admin/upload">Upload MP4 file</NavDropdown.Item>
                         <NavDropdown.Item href="#admin/conversion">Conversion of MP4 file</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#admin/playfiles">Conversion Files</NavDropdown.Item>
                     </NavDropdown>
                     <NavDropdown title="Content" id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#admin/addcls">Add Class</NavDropdown.Item>
-                        <NavDropdown.Item href="#admin/addsub">Add Subject</NavDropdown.Item>
-                        <NavDropdown.Item href="#admin/addchap">Add Chapter</NavDropdown.Item>
+                        <NavDropdown.Item href="#admin/addclsnsub">Classes & Subjects</NavDropdown.Item>
+                        <NavDropdown.Item href="#admin/mapchap">Mapping Chapters</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link href="#admin/mapping">Mapping</Nav.Link>
                 </Nav>

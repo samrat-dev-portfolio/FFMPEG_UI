@@ -1,8 +1,84 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Container, Col, Row, Table, Button, InputGroup, FormControl, Pagination, Dropdown, ButtonGroup } from 'react-bootstrap';
 import './Conversion.scss';
+import axios from 'axios';
 
 export default function Conversion(props) {
+    const baseurl = window.ffmpeg_baseurl;
+
+    const [getLoading_Content, setLoading_Content] = useState({ enabled: false, alert: '' });
+    const [getContent, setContent] = useState([]);
+
+    //#region Hooks 
+    useEffect(() => {
+        loadContent();
+    }, []);
+    //#endregion
+
+    const loadContent = () => {
+        setLoading_Content({ enabled: true, alert: 'Loading...' });
+        axios.get(`${baseurl}api/mpeg/getContent`)
+            .then(res => {
+                setContent(res.data.data);
+                setLoading_Content({ enabled: false, alert: '' });
+                // console.log(res.data.data);
+            }).catch(err => {
+                setLoading_Content({ enabled: true, alert: 'Error' });
+            });
+    };
+    const Start_Click = ({ contentID, contentFileName }, e) => {
+        if ('start' === e) {
+            axios.get(`${baseurl}api/mpeg/MediaInfo/${contentID}`, {
+                params: {
+                    fname: contentFileName,
+                }
+            }).then(res => {
+                console.log(res);
+                CreateKey(contentID, function () {
+                    Convertfile(res.data, contentID, contentFileName);
+                    // frame progress calculation
+                });
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+        else if ('play' === e) {
+            console.log(id, 'p');
+        }
+        else if ('delete' === e) {
+            console.log(id, 'd');
+        }
+    };
+    const CreateKey = (contentID, callback) => {
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        // const body = JSON.stringify({ Id: contentID });
+        const body = { Id: contentID };
+        axios.post(`${baseurl}api/mpeg/CreateKey`, body, config).then(res => {
+            console.log(res);
+            callback();
+        }).catch(err => {
+            console.log(err);
+        });
+    };
+    const Convertfile = (MediaInfo, contentID, contentFileName) => {
+        axios.get(`${baseurl}api/mpeg/Conversion/${contentID}`, {
+            params: {
+                fname: contentFileName,
+            }
+        }).then(res => {
+            console.log(res);
+
+        }).catch(err => {
+            console.log(err);
+        });
+        // console.log(MediaInfo, contentID, contentFileName);
+    };
+
+    //#region Pagination
     let active = 2;
     let items = [];
     for (let number = 1; number <= 5; number++) {
@@ -12,6 +88,7 @@ export default function Conversion(props) {
             </Pagination.Item>,
         );
     }
+    //#endregion
 
     return (
         <Container fluid className="C_Conversion">
@@ -83,30 +160,28 @@ export default function Conversion(props) {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>With our online editor, yo</td>
-                                <td>and click on a button </td>
-                                <td>
-                                    CSS is the language we use to style an HTML document.</td>
-                                <td>
-                                    <Button variant="outline-info" size="sm">Start</Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                <td>
-                                    <Button variant="info" size="sm" className="mr-1 mb-1">Play</Button>
-                                    <Button variant="danger" size="sm" className="mb-1">Delete</Button>
-                                </td>
-                            </tr>
+                            {
+                                getContent.map((item, index) => {
+                                    return <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{item.contentID}</td>
+                                        <td>{item.contentTitle}</td>
+                                        <td>{item.contentFileName}</td>
+                                        <td>{
+                                            item.IsConversion == '0' ?
+                                                <Button variant="outline-info" size="sm" onClick={() => Start_Click(item, 'start')}>Start</Button> :
+                                                <span>
+                                                    <Button variant="info" size="sm" className="mr-1 mb-1" onClick={() => Start_Click(item.contentID, 'play')}>Play</Button>
+                                                    <Button variant="danger" size="sm" className="mb-1" onClick={() => Start_Click(item.contentID, 'delete')}>Delete</Button>
+                                                </span>
+                                        }</td>
+                                    </tr>;
+                                })
+                            }
                         </tbody>
                     </Table>
                 </Col>
-                <Col className="col-12 pt-3">
+                <Col className="col-12 pt-3 d-none">
                     <Pagination size="sm">{items}</Pagination>
                 </Col>
             </Row>

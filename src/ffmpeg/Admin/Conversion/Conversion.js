@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Container, Col, Row, Table, Button, InputGroup, FormControl, Pagination, Dropdown, ButtonGroup } from 'react-bootstrap';
 import './Conversion.scss';
 import axios from 'axios';
+import Modal from '../Modal/Modal';
 
 export default function Conversion(props) {
     const baseurl = window.ffmpeg_baseurl;
 
     const [getLoading_Content, setLoading_Content] = useState({ enabled: false, alert: '' });
     const [getContent, setContent] = useState([]);
+    const [getCProgress, setCProgress] = useState(0);
+    let CProgressTimer = useRef(null);
+
+    const [getModalData, setModalData] = useState([]);
+    const [getShowModal, setShowModal] = useState(false);
+    const [getShowModalHideBtn, setShowModalHideBtn] = useState(false);
 
     //#region Hooks 
     useEffect(() => {
@@ -26,7 +33,16 @@ export default function Conversion(props) {
                 setLoading_Content({ enabled: true, alert: 'Error' });
             });
     };
+    const update_modal = (msg, is_reset) => {
+        if (!is_reset) {
+            setModalData(prevState => [msg, ...prevState]);
+        } else {
+            setModalData([msg]);
+        }
+    };
     const Start_Click = ({ contentID, contentFileName }, e) => {
+        update_modal('Ready for Conversion...', false);
+        setShowModal(true);
         if ('start' === e) {
             axios.get(`${baseurl}api/mpeg/MediaInfo/${contentID}`, {
                 params: {
@@ -34,12 +50,16 @@ export default function Conversion(props) {
                 }
             }).then(res => {
                 console.log(res);
+                let { duration, fps, frame } = res.data;
+                update_modal(`Video duration ${duration}, fps ${fps} and frame ${frame}`, false);
                 CreateKey(contentID, function () {
-                    Convertfile(res.data, contentID, contentFileName);
-                    // frame progress calculation
+                    Convertfile(contentID, contentFileName);
+                    frame_progress(contentID, res.data);
                 });
             }).catch(err => {
                 console.log(err);
+                update_modal(err, false);
+                setShowModalHideBtn(true);
             });
         }
         else if ('play' === e) {
@@ -50,32 +70,68 @@ export default function Conversion(props) {
         }
     };
     const CreateKey = (contentID, callback) => {
+        update_modal('Ready for generate key file...', false);
         const config = {
             headers: {
                 'content-type': 'application/json',
             }
         };
-        // const body = JSON.stringify({ Id: contentID });
         const body = { Id: contentID };
         axios.post(`${baseurl}api/mpeg/CreateKey`, body, config).then(res => {
             console.log(res);
+            update_modal('key generated successfully', false);
             callback();
         }).catch(err => {
             console.log(err);
+            update_modal(err, false);
+            setShowModalHideBtn(true);
         });
     };
-    const Convertfile = (MediaInfo, contentID, contentFileName) => {
+    const Convertfile = (contentID, contentFileName) => {
+        update_modal('Ready for encryption...', false);
         axios.get(`${baseurl}api/mpeg/Conversion/${contentID}`, {
             params: {
                 fname: contentFileName,
             }
         }).then(res => {
             console.log(res);
-
+            update_modal('video file encrypted successfully...', false);
         }).catch(err => {
             console.log(err);
+            update_modal(err, false);
+            setShowModalHideBtn(true);
         });
-        // console.log(MediaInfo, contentID, contentFileName);
+    };
+    const frame_progress = (contentID, { frame }) => {
+        update_modal('keep watching the encryption progress...', false);
+        CProgressTimer.current = setInterval(() => {
+            axios.get(`${baseurl}api/mpeg/ConversionProgressInfo/${contentID}`, {
+                params: {}
+            }).then(res => {
+                console.log(res.data);
+                const { status, currentFrame } = res.data;
+                if ('continue' === status) {
+                    let percent = parseInt((currentFrame / frame) * 100);
+                    // setCProgress(percent + '%');
+                    update_modal(`encryption progress ${percent}%`, false);
+                }
+                else if ('end' === status) {
+                    console.log('end');
+                    // setCProgress('100%');
+                    update_modal(`encryption progress 100% completed`, false);
+                    clearInterval(CProgressTimer.current);
+                    setShowModalHideBtn(true);
+                }
+            }).catch(err => {
+                console.log(err);
+                clearInterval(CProgressTimer.current);
+                update_modal(err, false);
+                setShowModalHideBtn(true);
+            });
+        }, 10000);
+    };
+    const hideModal = () => {
+        setShowModal(false);
     };
 
     //#region Pagination
@@ -92,7 +148,12 @@ export default function Conversion(props) {
 
     return (
         <Container fluid className="C_Conversion">
+            <Modal show={getShowModal} list={getModalData} onhide={hideModal} hide_visible={getShowModalHideBtn} />
             <Row className="h-100 m-0">
+                <Col className="col-12 pt-3">
+                    getCProgress: {getCProgress} <br />
+
+                </Col>
                 <Col className="col-12 pt-3">
                     <Table striped bordered hover>
                         <thead>

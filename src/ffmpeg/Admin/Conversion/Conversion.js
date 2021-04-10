@@ -41,9 +41,9 @@ export default function Conversion(props) {
         }
     };
     const Start_Click = ({ contentID, contentFileName }, e) => {
-        update_modal('Ready for Conversion...', false);
-        setShowModal(true);
         if ('start' === e) {
+            update_modal('Ready for Conversion...', false);
+            setShowModal(true);
             axios.get(`${baseurl}api/mpeg/MediaInfo/${contentID}`, {
                 params: {
                     fname: contentFileName,
@@ -63,10 +63,16 @@ export default function Conversion(props) {
             });
         }
         else if ('play' === e) {
-            console.log(id, 'p');
+            console.log(contentID, 'p');
         }
         else if ('delete' === e) {
-            console.log(id, 'd');
+            console.log(contentID, 'd');
+        }
+        else if ('remove' === e) {
+            console.log(contentID, 'rm');
+        }
+        else if ('restore' === e) {
+            console.log(contentID, 'rs');
         }
     };
     const CreateKey = (contentID, callback) => {
@@ -132,6 +138,7 @@ export default function Conversion(props) {
     };
     const hideModal = () => {
         setShowModal(false);
+        loadContent();
     };
 
     //#region Pagination
@@ -151,8 +158,6 @@ export default function Conversion(props) {
             <Modal show={getShowModal} list={getModalData} onhide={hideModal} hide_visible={getShowModalHideBtn} />
             <Row className="h-100 m-0">
                 <Col className="col-12 pt-3">
-                    getCProgress: {getCProgress} <br />
-
                 </Col>
                 <Col className="col-12 pt-3">
                     <Table striped bordered hover>
@@ -231,11 +236,30 @@ export default function Conversion(props) {
                                         <td>{
                                             item.IsConversion == '0' ?
                                                 <Button variant="outline-info" size="sm" onClick={() => Start_Click(item, 'start')}>Start</Button> :
-                                                <span>
-                                                    <Button variant="info" size="sm" className="mr-1 mb-1" onClick={() => Start_Click(item.contentID, 'play')}>Play</Button>
-                                                    <Button variant="danger" size="sm" className="mb-1" onClick={() => Start_Click(item.contentID, 'delete')}>Delete</Button>
-                                                </span>
-                                        }</td>
+                                                item.IsConversion == '1' ?
+                                                    <Button variant="outline-info" size="sm" >Progress</Button> :
+                                                    <span>
+                                                        <Dropdown>
+                                                            <Dropdown.Toggle variant="info" size="sm" id="dropdown-content" className="mr-1 mb-1">
+                                                                Content &nbsp;
+                                                            </Dropdown.Toggle>
+                                                            <Dropdown.Menu>
+                                                                <Dropdown.Item onClick={() => Start_Click(item, 'play')}>Play</Dropdown.Item>
+                                                                <Dropdown.Item className="danger" onClick={() => Start_Click(item, 'delete')}>Delete</Dropdown.Item>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+                                                        <Dropdown>
+                                                            <Dropdown.Toggle variant="info" size="sm" id="dropdown-key" className="mb-1">
+                                                                Key &nbsp;
+                                                            </Dropdown.Toggle>
+                                                            <Dropdown.Menu>
+                                                            <Dropdown.Item onClick={() => Start_Click(item, 'restore')}>Restore to device</Dropdown.Item>
+                                                            <Dropdown.Item className="danger" onClick={() => Start_Click(item, 'remove')}>Remove from device</Dropdown.Item>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+                                                    </span>
+                                        }
+                                        </td>
                                     </tr>;
                                 })
                             }

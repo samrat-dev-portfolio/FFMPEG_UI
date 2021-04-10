@@ -1,8 +1,13 @@
 .td-filter-box {
     display: flex;
     flex-direction: column;
-    .dropdown-toggle {
-        // background-color: transparent;
-        // color:black;
+}
+
+.C_Conversion {
+    .dropdown-item.danger {
+        background-color: #ffcdd2;
+    }
+    .dropdown-item:active {
+        color: black;
     }
 }

@@ -9,7 +9,6 @@ export default function Conversion(props) {
 
     const [getLoading_Content, setLoading_Content] = useState({ enabled: false, alert: '' });
     const [getContent, setContent] = useState([]);
-    const [getCProgress, setCProgress] = useState(0);
     let CProgressTimer = useRef(null);
 
     const [getModalData, setModalData] = useState([]);
@@ -34,6 +33,10 @@ export default function Conversion(props) {
             });
     };
     const update_modal = (msg, is_reset) => {
+        if (msg == null) {
+            setModalData([]);
+            return;
+        }
         if (!is_reset) {
             setModalData(prevState => [msg, ...prevState]);
         } else {
@@ -49,8 +52,13 @@ export default function Conversion(props) {
                     fname: contentFileName,
                 }
             }).then(res => {
-                console.log(res);
+                // console.log(res);
                 let { duration, fps, frame } = res.data;
+                if (typeof duration === 'undefined') {
+                    update_modal(`Video not exist!`, false);
+                    setShowModalHideBtn(true);
+                    return;
+                }
                 update_modal(`Video duration ${duration}, fps ${fps} and frame ${frame}`, false);
                 CreateKey(contentID, function () {
                     Convertfile(contentID, contentFileName);
@@ -62,17 +70,39 @@ export default function Conversion(props) {
                 setShowModalHideBtn(true);
             });
         }
+        else if ('progress' === e) {
+            setShowModal(true);
+            axios.get(`${baseurl}api/mpeg/MediaInfo/${contentID}`, {
+                params: {
+                    fname: contentFileName,
+                }
+            })
+                .then(res => {
+                    let { duration, fps, frame } = res.data;
+                    update_modal(`Video duration ${duration}, fps ${fps} and frame ${frame}`, false);
+                    frame_progress(contentID, res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                    update_modal(err, false);
+                    setShowModalHideBtn(true);
+                });
+        }
+        else if ('restore' === e) {
+            // console.log(contentID, 'rs');
+            setShowModal(true);
+            RestoreKey2SD(contentID);
+        }
+        else if ('remove' === e) {
+            // console.log(contentID, 'r');
+            setShowModal(true);
+            RemoveKeyFromSD(contentID);
+        }
         else if ('play' === e) {
-            console.log(contentID, 'p');
+            console.log(contentID, 'pl');
         }
         else if ('delete' === e) {
             console.log(contentID, 'd');
-        }
-        else if ('remove' === e) {
-            console.log(contentID, 'rm');
-        }
-        else if ('restore' === e) {
-            console.log(contentID, 'rs');
         }
     };
     const CreateKey = (contentID, callback) => {
@@ -84,7 +114,7 @@ export default function Conversion(props) {
         };
         const body = { Id: contentID };
         axios.post(`${baseurl}api/mpeg/CreateKey`, body, config).then(res => {
-            console.log(res);
+            // console.log(res);
             update_modal('key generated successfully', false);
             callback();
         }).catch(err => {
@@ -100,7 +130,7 @@ export default function Conversion(props) {
                 fname: contentFileName,
             }
         }).then(res => {
-            console.log(res);
+            // console.log(res);
             update_modal('video file encrypted successfully...', false);
         }).catch(err => {
             console.log(err);
@@ -114,7 +144,7 @@ export default function Conversion(props) {
             axios.get(`${baseurl}api/mpeg/ConversionProgressInfo/${contentID}`, {
                 params: {}
             }).then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 const { status, currentFrame } = res.data;
                 if ('continue' === status) {
                     let percent = parseInt((currentFrame / frame) * 100);
@@ -122,11 +152,12 @@ export default function Conversion(props) {
                     update_modal(`encryption progress ${percent}%`, false);
                 }
                 else if ('end' === status) {
-                    console.log('end');
-                    // setCProgress('100%');
+                    // console.log('end');
                     update_modal(`encryption progress 100% completed`, false);
-                    clearInterval(CProgressTimer.current);
-                    setShowModalHideBtn(true);
+                    ConversionEnded(contentID, function(){
+                        clearInterval(CProgressTimer.current);
+                        setShowModalHideBtn(true);
+                    });
                 }
             }).catch(err => {
                 console.log(err);
@@ -136,8 +167,61 @@ export default function Conversion(props) {
             });
         }, 10000);
     };
+    const ConversionEnded = (contentID,callback) => {
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        const body = { Id: contentID };
+        axios.post(`${baseurl}api/mpeg/ConversionEnded`, body, config).then(res => {
+            // console.log(res);
+            update_modal(res.data.data, false);
+            callback();
+        }).catch(err => {
+            console.log(err);
+            update_modal(err, false);
+            setShowModalHideBtn(true);
+        });
+    };
+    const RestoreKey2SD = (contentID) => {
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        const body = { Id: contentID };
+        axios.post(`${baseurl}api/mpeg/RestoreKey2SD`, body, config).then(res => {
+            // console.log(res);
+            update_modal(res.data.data, false);
+            setShowModalHideBtn(true);
+        }).catch(err => {
+            console.log(err);
+            update_modal(err, false);
+            setShowModalHideBtn(true);
+        });
+    };
+    const RemoveKeyFromSD = (contentID) => {
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        const body = { Id: contentID };
+        axios.post(`${baseurl}api/mpeg/RemoveKeyFromSD`, body, config).then(res => {
+            // console.log(res);
+            update_modal(res.data.data, false);
+            setShowModalHideBtn(true);
+        }).catch(err => {
+            console.log(err);
+            update_modal(err, false);
+            setShowModalHideBtn(true);
+        });
+    };
     const hideModal = () => {
+        update_modal(null, true);
         setShowModal(false);
+        setShowModalHideBtn(false);
         loadContent();
     };
 
@@ -237,7 +321,7 @@ export default function Conversion(props) {
                                             item.IsConversion == '0' ?
                                                 <Button variant="outline-info" size="sm" onClick={() => Start_Click(item, 'start')}>Start</Button> :
                                                 item.IsConversion == '1' ?
-                                                    <Button variant="outline-info" size="sm" >Progress</Button> :
+                                                    <Button variant="outline-info" size="sm" onClick={() => Start_Click(item, 'progress')}>Progress</Button> :
                                                     <span>
                                                         <Dropdown>
                                                             <Dropdown.Toggle variant="info" size="sm" id="dropdown-content" className="mr-1 mb-1">
@@ -253,8 +337,8 @@ export default function Conversion(props) {
                                                                 Key &nbsp;
                                                             </Dropdown.Toggle>
                                                             <Dropdown.Menu>
-                                                            <Dropdown.Item onClick={() => Start_Click(item, 'restore')}>Restore to device</Dropdown.Item>
-                                                            <Dropdown.Item className="danger" onClick={() => Start_Click(item, 'remove')}>Remove from device</Dropdown.Item>
+                                                                <Dropdown.Item onClick={() => Start_Click(item, 'restore')}>Restore to device</Dropdown.Item>
+                                                                <Dropdown.Item className="danger" onClick={() => Start_Click(item, 'remove')}>Remove from device</Dropdown.Item>
                                                             </Dropdown.Menu>
                                                         </Dropdown>
                                                     </span>

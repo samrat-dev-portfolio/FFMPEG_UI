@@ -10,27 +10,78 @@ export default function Conversion(props) {
     const [getLoading_Content, setLoading_Content] = useState({ enabled: false, alert: '' });
     const [getContent, setContent] = useState([]);
     let CProgressTimer = useRef(null);
+    let LazyKeyupTimer = useRef(null);
+    let contentInput = useRef(null);
+    let contentInputT = useRef(null);
 
     const [getModalData, setModalData] = useState([]);
     const [getShowModal, setShowModal] = useState(false);
     const [getShowModalHideBtn, setShowModalHideBtn] = useState(false);
+    const [getPageItems, setPageItems] = useState([]);
+    const [getContentParams, setContentParams] = useState({
+        "pageindex": 0,
+        "limit": 7
+    });
 
     //#region Hooks 
     useEffect(() => {
-        loadContent();
+        loadContent(getContentParams);
     }, []);
     //#endregion
 
-    const loadContent = () => {
+    const loadContent = (_params) => {
         setLoading_Content({ enabled: true, alert: 'Loading...' });
-        axios.get(`${baseurl}api/mpeg/getContent`)
-            .then(res => {
-                setContent(res.data.data);
-                setLoading_Content({ enabled: false, alert: '' });
-                // console.log(res.data.data);
-            }).catch(err => {
-                setLoading_Content({ enabled: true, alert: 'Error' });
+        axios.get(`${baseurl}api/mpeg/getContentPage`, {
+            params: _params
+        }).then(res => {
+            setContent(res.data.data);
+            setLoading_Content({ enabled: false, alert: '' });
+            let { pageindex, totalPage } = res.data;
+            let PageItems = [];
+            for (let p = 0; p < totalPage; p++) {
+                PageItems.push(<Pagination.Item key={p} onClick={() => { pageChange(p) }} active={p == pageindex}>{p + 1}</Pagination.Item>);
+            }
+            setPageItems(PageItems);
+            // console.log(res.data);
+        }).catch(err => {
+            setLoading_Content({ enabled: true, alert: 'Error' });
+        });
+    };
+    const pageChange = p_index => {
+        setContentParams(prevData => {
+            let data = { ...prevData, "pageindex": p_index };
+            loadContent(data);
+            return data;
+        });
+    };
+    const LazyKeyup = (_callback) => {
+        clearTimeout(LazyKeyupTimer.current);
+        LazyKeyupTimer.current = setTimeout(() => {
+            _callback();
+            // _callback.call(this, _args);
+        }, 1000);
+    };
+    const searchByContentID = _contentID => {
+        contentInputT.current.value = '';
+        LazyKeyup(() => {
+            setContentParams(prevData => {
+                let data = { ...prevData, "contentID": _contentID };
+                delete data["contentTitle"];
+                loadContent(data);
+                return data;
             });
+        });
+    };
+    const searchByContentTitle = _contentFileName => {
+        contentInput.current.value = '';
+        LazyKeyup(() => {
+            setContentParams(prevData => {
+                let data = { ...prevData, "contentTitle": _contentFileName };
+                delete data["contentID"];
+                loadContent(data);
+                return data;
+            });
+        });
     };
     const update_modal = (msg, is_reset) => {
         if (msg == null) {
@@ -45,7 +96,6 @@ export default function Conversion(props) {
     };
     const Start_Click = ({ contentID, contentFileName }, e) => {
         if ('start' === e) {
-            update_modal('Ready for Conversion...', false);
             setShowModal(true);
             axios.get(`${baseurl}api/mpeg/MediaInfo/${contentID}`, {
                 params: {
@@ -59,6 +109,7 @@ export default function Conversion(props) {
                     setShowModalHideBtn(true);
                     return;
                 }
+                update_modal('Ready for Conversion...', false);
                 update_modal(`Video duration ${duration}, fps ${fps} and frame ${frame}`, false);
                 CreateKey(contentID, function () {
                     Convertfile(contentID, contentFileName);
@@ -79,6 +130,11 @@ export default function Conversion(props) {
             })
                 .then(res => {
                     let { duration, fps, frame } = res.data;
+                    if (typeof duration === 'undefined') {
+                        update_modal(`Video not exist!`, false);
+                        setShowModalHideBtn(true);
+                        return;
+                    }
                     update_modal(`Video duration ${duration}, fps ${fps} and frame ${frame}`, false);
                     frame_progress(contentID, res.data);
                 })
@@ -154,7 +210,7 @@ export default function Conversion(props) {
                 else if ('end' === status) {
                     // console.log('end');
                     update_modal(`encryption progress 100% completed`, false);
-                    ConversionEnded(contentID, function(){
+                    ConversionEnded(contentID, function () {
                         clearInterval(CProgressTimer.current);
                         setShowModalHideBtn(true);
                     });
@@ -167,7 +223,7 @@ export default function Conversion(props) {
             });
         }, 10000);
     };
-    const ConversionEnded = (contentID,callback) => {
+    const ConversionEnded = (contentID, callback) => {
         const config = {
             headers: {
                 'content-type': 'application/json',
@@ -222,20 +278,8 @@ export default function Conversion(props) {
         update_modal(null, true);
         setShowModal(false);
         setShowModalHideBtn(false);
-        loadContent();
+        loadContent(getContentParams);
     };
-
-    //#region Pagination
-    let active = 2;
-    let items = [];
-    for (let number = 1; number <= 5; number++) {
-        items.push(
-            <Pagination.Item key={number} href={"#admin/conversion?offset=" + number} active={number === active}>
-                {number}
-            </Pagination.Item>,
-        );
-    }
-    //#endregion
 
     return (
         <Container fluid className="C_Conversion">
@@ -256,6 +300,8 @@ export default function Conversion(props) {
                                                 placeholder="Search by ID"
                                                 aria-label=""
                                                 aria-describedby="basic-addon2"
+                                                onKeyUp={(e) => { searchByContentID(e.target.value); }} 
+                                                ref={contentInput}
                                             />
                                         </InputGroup>
                                     </div>
@@ -267,7 +313,9 @@ export default function Conversion(props) {
                                             <FormControl
                                                 placeholder="Search by Title"
                                                 aria-label=""
-                                                aria-describedby="basic-addon2"
+                                                aria-describedby="basic-addon2" 
+                                                onKeyUp={(e) => { searchByContentTitle(e.target.value); }} 
+                                                ref={contentInputT}
                                             />
                                         </InputGroup>
                                     </div>
@@ -350,8 +398,8 @@ export default function Conversion(props) {
                         </tbody>
                     </Table>
                 </Col>
-                <Col className="col-12 pt-3 d-none">
-                    <Pagination size="sm">{items}</Pagination>
+                <Col className="col-12 pt-3">
+                    <Pagination size="sm">{getPageItems}</Pagination>
                 </Col>
             </Row>
         </Container>

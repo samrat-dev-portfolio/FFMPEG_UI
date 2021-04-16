@@ -3,10 +3,12 @@ import { Container, Col, Row, Table, Button, InputGroup, FormControl, Pagination
 import './Conversion.scss';
 import axios from 'axios';
 import Modal from '../Modal/Modal';
+import Loading from '../Loading/Loading';
 
 export default function Conversion(props) {
     const baseurl = window.ffmpeg_baseurl;
-
+    const [getIsLoading, setIsLoading] = useState(false);
+    const [getError, setError] = useState('');
     const [getLoading_Content, setLoading_Content] = useState({ enabled: false, alert: '' });
     const [getContent, setContent] = useState([]);
     let CProgressTimer = useRef(null);
@@ -30,7 +32,8 @@ export default function Conversion(props) {
     //#endregion
 
     const loadContent = (_params) => {
-        setLoading_Content({ enabled: true, alert: 'Loading...' });
+        setIsLoading(true);
+        setError('Loading...');
         axios.get(`${baseurl}api/mpeg/getContentPage`, {
             params: _params
         }).then(res => {
@@ -42,9 +45,12 @@ export default function Conversion(props) {
                 PageItems.push(<Pagination.Item key={p} onClick={() => { pageChange(p) }} active={p == pageindex}>{p + 1}</Pagination.Item>);
             }
             setPageItems(PageItems);
+            setIsLoading(false);
+            setError('');
             // console.log(res.data);
         }).catch(err => {
-            setLoading_Content({ enabled: true, alert: 'Error' });
+            setIsLoading(false);
+            setError('Error loading Content');
         });
     };
     const pageChange = p_index => {
@@ -286,6 +292,10 @@ export default function Conversion(props) {
             <Modal show={getShowModal} list={getModalData} onhide={hideModal} hide_visible={getShowModalHideBtn} />
             <Row className="h-100 m-0">
                 <Col className="col-12 pt-3">
+                    <span className="loading-error">{getError}</span>
+                    {
+                        getIsLoading ? <Loading /> : null
+                    }
                 </Col>
                 <Col className="col-12 pt-3">
                     <Table striped bordered hover>
@@ -300,7 +310,7 @@ export default function Conversion(props) {
                                                 placeholder="Search by ID"
                                                 aria-label=""
                                                 aria-describedby="basic-addon2"
-                                                onKeyUp={(e) => { searchByContentID(e.target.value); }} 
+                                                onKeyUp={(e) => { searchByContentID(e.target.value); }}
                                                 ref={contentInput}
                                             />
                                         </InputGroup>
@@ -313,8 +323,8 @@ export default function Conversion(props) {
                                             <FormControl
                                                 placeholder="Search by Title"
                                                 aria-label=""
-                                                aria-describedby="basic-addon2" 
-                                                onKeyUp={(e) => { searchByContentTitle(e.target.value); }} 
+                                                aria-describedby="basic-addon2"
+                                                onKeyUp={(e) => { searchByContentTitle(e.target.value); }}
                                                 ref={contentInputT}
                                             />
                                         </InputGroup>

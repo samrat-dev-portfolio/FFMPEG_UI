@@ -10,14 +10,15 @@ import Home from "./Home/Home";
 import Admin from "./Admin/Admin";
 import Upload from "./Admin/Upload/Upload";
 import Conversion from "./Admin/Conversion/Conversion";
+import AddCsub from "./Admin/AddCsub/AddCsub";
 
 export default function Routes(props) {
     return (
         <>
             <Route path="/" exact>
                 {
-                    <Entry />
-                    // <Upload />
+                    // <Entry />
+                    <Admin />
                 }
             </Route>
             <Route path="/admin" component={Admin} />
@@ -25,7 +26,7 @@ export default function Routes(props) {
                 <Route path="/home" exact component={Home} />
                 <Route path="/admin/upload" exact component={Upload} />
                 <Route path="/admin/conversion" exact component={Conversion} />
-                <Route path="/admin/addclsnsub" exact render={() => { return <h3>add Classes N Subjects</h3> }} />
+                <Route path="/admin/addclsnsub" exact component={AddCsub} />
                 <Route path="/admin/mapchap" exact render={() => { return <h3>Mapping Chapter</h3> }} />
                 <Route path="/admin/mapping" exact render={() => { return <h3>Mapping Chapter - Video</h3> }} />
             </Switch>

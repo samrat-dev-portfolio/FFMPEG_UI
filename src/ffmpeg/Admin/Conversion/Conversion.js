@@ -15,6 +15,7 @@ export default function Conversion(props) {
     let LazyKeyupTimer = useRef(null);
     let contentInput = useRef(null);
     let contentInputT = useRef(null);
+    let contentInputF = useRef(null);
 
     const [getModalData, setModalData] = useState([]);
     const [getShowModal, setShowModal] = useState(false);
@@ -69,35 +70,63 @@ export default function Conversion(props) {
     };
     const searchByContentID = _contentID => {
         contentInputT.current.value = '';
+        contentInputF.current.value = '';
         LazyKeyup(() => {
             setContentParams(prevData => {
-                let data = { ...prevData, "contentID": _contentID };
+                let data = { ...prevData, "contentID": _contentID, "pageindex": 0 };
+                delete data["contentTitle"];
+                delete data["contentFileName"];
+                loadContent(data);
+                return data;
+            });
+        });
+    };
+    const searchByContentTitle = _contentTitle => {
+        contentInput.current.value = '';
+        contentInputF.current.value = '';
+        LazyKeyup(() => {
+            setContentParams(prevData => {
+                let data = { ...prevData, "contentTitle": _contentTitle, "pageindex": 0 };
+                delete data["contentID"];
+                delete data["contentFileName"];
+                loadContent(data);
+                return data;
+            });
+        });
+    };
+    const orderByThis = (orderby, desc) => {
+        setContentParams(prevData => {
+            let data = { ...prevData, orderby, desc };
+            // console.log(data);
+            loadContent(data);
+            return data;
+        });
+    };
+    const searchByContentFile = _contentFileName => {
+        contentInput.current.value = '';
+        contentInputT.current.value = '';
+        LazyKeyup(() => {
+            setContentParams(prevData => {
+                let data = { ...prevData, "contentFileName": _contentFileName, "pageindex": 0 };
+                delete data["contentID"];
                 delete data["contentTitle"];
                 loadContent(data);
                 return data;
             });
         });
     };
-    const searchByContentTitle = _contentFileName => {
-        contentInput.current.value = '';
-        LazyKeyup(() => {
-            setContentParams(prevData => {
-                let data = { ...prevData, "contentTitle": _contentFileName };
-                delete data["contentID"];
-                loadContent(data);
-                return data;
-            });
-        });
-    };
+
     const update_modal = (msg, is_reset) => {
         if (msg == null) {
             setModalData([]);
             return;
         }
-        if (!is_reset) {
-            setModalData(prevState => [msg, ...prevState]);
-        } else {
-            setModalData([msg]);
+        if ('string' === typeof msg) {
+            if (!is_reset) {
+                setModalData(prevState => [msg, ...prevState]);
+            } else {
+                setModalData([msg]);
+            }
         }
     };
     const Start_Click = ({ contentID, contentFileName }, e) => {
@@ -151,12 +180,10 @@ export default function Conversion(props) {
                 });
         }
         else if ('restore' === e) {
-            // console.log(contentID, 'rs');
             setShowModal(true);
             RestoreKey2SD(contentID);
         }
         else if ('remove' === e) {
-            // console.log(contentID, 'r');
             setShowModal(true);
             RemoveKeyFromSD(contentID);
         }
@@ -164,7 +191,7 @@ export default function Conversion(props) {
             console.log(contentID, 'pl');
         }
         else if ('delete' === e) {
-            console.log(contentID, 'd');
+            Deletecontent(contentID);
         }
     };
     const CreateKey = (contentID, callback) => {
@@ -263,6 +290,25 @@ export default function Conversion(props) {
             setShowModalHideBtn(true);
         });
     };
+    const Deletecontent = (contentID) => {
+        setIsLoading(true);
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        const body = { Id: contentID };
+        axios.post(`${baseurl}api/mpeg/Deletecontent`, body, config).then(res => {
+            setIsLoading(false);
+            // console.log(res);
+            loadContent(getContentParams);
+        }).catch(err => {
+            setError('Error');
+            setIsLoading(false);
+            // console.log(err);
+            loadContent(getContentParams);
+        });
+    };
     const RemoveKeyFromSD = (contentID) => {
         const config = {
             headers: {
@@ -338,6 +384,8 @@ export default function Conversion(props) {
                                                 placeholder="Search by File Name"
                                                 aria-label=""
                                                 aria-describedby="basic-addon2"
+                                                onKeyUp={(e) => { searchByContentFile(e.target.value); }}
+                                                ref={contentInputF}
                                             />
                                         </InputGroup>
                                     </div></th>
@@ -351,14 +399,20 @@ export default function Conversion(props) {
                                             <Dropdown.Menu>
                                                 <Dropdown.Item href="#">
                                                     <ButtonGroup size="sm">
-                                                        <Button className="mr-1">ID</Button>
-                                                        <Button>Desc</Button>
+                                                        <Button className="mr-1" onClick={() => { orderByThis('contentID', 'false'); }}>ID</Button>
+                                                        <Button onClick={() => { orderByThis('contentID', 'true'); }}>Desc</Button>
                                                     </ButtonGroup>
                                                 </Dropdown.Item>
                                                 <Dropdown.Item href="#">
                                                     <ButtonGroup size="sm">
-                                                        <Button className="mr-1">File Name</Button>
-                                                        <Button>Desc</Button>
+                                                        <Button className="mr-1" onClick={() => { orderByThis('contentTitle', 'false'); }}>Title</Button>
+                                                        <Button onClick={() => { orderByThis('contentTitle', 'true'); }}>Desc</Button>
+                                                    </ButtonGroup>
+                                                </Dropdown.Item>
+                                                <Dropdown.Item href="#">
+                                                    <ButtonGroup size="sm">
+                                                        <Button className="mr-1" onClick={() => { orderByThis('contentFileName', 'false'); }}>File Name</Button>
+                                                        <Button onClick={() => { orderByThis('contentFileName', 'true'); }}>Desc</Button>
                                                     </ButtonGroup>
                                                 </Dropdown.Item>
                                             </Dropdown.Menu>
@@ -377,7 +431,10 @@ export default function Conversion(props) {
                                         <td>{item.contentFileName}</td>
                                         <td>{
                                             item.IsConversion == '0' ?
-                                                <Button variant="outline-info" size="sm" onClick={() => Start_Click(item, 'start')}>Start</Button> :
+                                                <span>
+                                                    <Button variant="outline-info" size="sm" className="mr-1 mb-1" onClick={() => Start_Click(item, 'start')}>Start</Button>
+                                                    <Button variant="outline-danger" size="sm" className="mb-1" onClick={() => Start_Click(item, 'delete')}>Delete</Button>
+                                                </span> :
                                                 item.IsConversion == '1' ?
                                                     <Button variant="outline-info" size="sm" onClick={() => Start_Click(item, 'progress')}>Progress</Button> :
                                                     <span>

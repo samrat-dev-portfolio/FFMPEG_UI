@@ -114,7 +114,8 @@ export default function Upload() {
                 setError('File uploaded successfully.');
                 setIsLoading(false);
                 ResetAll();
-                console.log(res);
+                console.log('File uploaded successfully.');
+                // console.log(res);
             }).catch(err => {
                 setError('Error post data');
                 setIsLoading(false);

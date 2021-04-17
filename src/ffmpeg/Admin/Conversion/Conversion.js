@@ -190,7 +190,9 @@ export default function Conversion(props) {
             RemoveKeyFromSD(contentID);
         }
         else if ('delete' === e) {
-            Deletecontent(contentID);
+            if (confirm('are you sure to delete ' + contentID)) {
+                Deletecontent(contentID);
+            }
         }
         else if ('play' === e) {
             setPlayerContentID(contentID);

@@ -4,12 +4,12 @@ import './Conversion.scss';
 import axios from 'axios';
 import Modal from '../Modal/Modal';
 import Loading from '../Loading/Loading';
+import Player from './../Player/Player';
 
 export default function Conversion(props) {
     const baseurl = window.ffmpeg_baseurl;
     const [getIsLoading, setIsLoading] = useState(false);
     const [getError, setError] = useState('');
-    const [getLoading_Content, setLoading_Content] = useState({ enabled: false, alert: '' });
     const [getContent, setContent] = useState([]);
     let CProgressTimer = useRef(null);
     let LazyKeyupTimer = useRef(null);
@@ -26,6 +26,9 @@ export default function Conversion(props) {
         "limit": 7
     });
 
+    const [getLoadPlayer, setLoadPlayer] = useState(false);
+    const [getPlayerContentID, setPlayerContentID] = useState(null);
+
     //#region Hooks 
     useEffect(() => {
         loadContent(getContentParams);
@@ -39,7 +42,6 @@ export default function Conversion(props) {
             params: _params
         }).then(res => {
             setContent(res.data.data);
-            setLoading_Content({ enabled: false, alert: '' });
             let { pageindex, totalPage } = res.data;
             let PageItems = [];
             for (let p = 0; p < totalPage; p++) {
@@ -187,11 +189,12 @@ export default function Conversion(props) {
             setShowModal(true);
             RemoveKeyFromSD(contentID);
         }
-        else if ('play' === e) {
-            console.log(contentID, 'pl');
-        }
         else if ('delete' === e) {
             Deletecontent(contentID);
+        }
+        else if ('play' === e) {
+            setPlayerContentID(contentID);
+            setLoadPlayer(true);
         }
     };
     const CreateKey = (contentID, callback) => {
@@ -332,9 +335,13 @@ export default function Conversion(props) {
         setShowModalHideBtn(false);
         loadContent(getContentParams);
     };
+    const hidePlayer = () => {
+        setLoadPlayer(false);
+    };
 
     return (
         <Container fluid className="C_Conversion">
+            <Player show={getLoadPlayer} contentID={getPlayerContentID} onhide={hidePlayer} />
             <Modal show={getShowModal} list={getModalData} onhide={hideModal} hide_visible={getShowModalHideBtn} />
             <Row className="h-100 m-0">
                 <Col className="col-12 pt-3">

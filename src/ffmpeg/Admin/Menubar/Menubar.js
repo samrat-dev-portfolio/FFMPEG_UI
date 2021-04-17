@@ -21,7 +21,6 @@ export default function Menubar() {
                         <NavDropdown.Item href="#admin/addclsnsub">Classes & Subjects</NavDropdown.Item>
                         <NavDropdown.Item href="#admin/mapchap">Mapping Chapters</NavDropdown.Item>
                     </NavDropdown>
-                    <Nav.Link href="#admin/mapping">Mapping</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

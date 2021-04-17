@@ -28,7 +28,6 @@ export default function Routes(props) {
                 <Route path="/admin/conversion" exact component={Conversion} />
                 <Route path="/admin/addclsnsub" exact component={AddCsub} />
                 <Route path="/admin/mapchap" exact render={() => { return <h3>Mapping Chapter</h3> }} />
-                <Route path="/admin/mapping" exact render={() => { return <h3>Mapping Chapter - Video</h3> }} />
             </Switch>
         </>
     );

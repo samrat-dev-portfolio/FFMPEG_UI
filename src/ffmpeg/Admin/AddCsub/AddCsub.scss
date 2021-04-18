@@ -12,5 +12,24 @@
             border-width: 0;
             background: transparent;
         }
+        .btnAdd {
+            padding: .5rem .7rem;
+            i {
+                margin-right: .2rem;
+            }
+        }
+        .btnDelete {
+            color: #e04857;
+        }
+        .btnEdit {
+            color: #007bff;
+        }
+    }
+    .loading-error{
+        left: 25%;
+    }
+    .C_Loading{
+        right: 2rem;
+        top: 1.4rem;
     }
 }

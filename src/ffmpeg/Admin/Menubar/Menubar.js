@@ -13,14 +13,17 @@ export default function Menubar() {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
                     <Nav.Link href="#admin">Home</Nav.Link>
-                    <NavDropdown title="MP4" id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#admin/upload">Upload MP4 file</NavDropdown.Item>
-                        <NavDropdown.Item href="#admin/conversion">Conversion of MP4 file</NavDropdown.Item>
-                    </NavDropdown>
-                    <NavDropdown title="Content" id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#admin/addclsnsub">Classes & Subjects</NavDropdown.Item>
-                        <NavDropdown.Item href="#admin/mapchap">Mapping Chapters</NavDropdown.Item>
-                    </NavDropdown>
+                    <Nav.Link href="#admin/upload">Upload</Nav.Link>
+                    <Nav.Link href="#admin/conversion">Conversion</Nav.Link>
+                    <Nav.Link href="#admin/addclsnsub">Class-Subs</Nav.Link>
+                    <Nav.Link href="#admin/addchap">Chapters</Nav.Link>
+                    {
+                        /*
+                        <NavDropdown title="Content" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="#admin/mapchap">Mapping Chapters</NavDropdown.Item>
+                        </NavDropdown>
+                        */
+                    }
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

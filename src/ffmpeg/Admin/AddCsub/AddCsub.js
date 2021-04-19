@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button, Col, Container, Form, Row, Card, Table, ProgressBar } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, Col, Container, Form, Row, Card, Table } from "react-bootstrap";
 import axios from 'axios';
 import Loading from '../Loading/Loading';
 import { MDBIcon, MDBBtn } from "mdbreact";
@@ -225,7 +225,7 @@ export default function AddCsub() {
                                 <tr>
                                     <td style={{ width: '10%' }}></td>
                                     <td style={{ width: '70%' }} className="py-1">
-                                        <Form.Group controlId="Subject_Name">
+                                        <Form.Group controlId="Subject_Name" className="my-0">
                                             <Form.Control type="text" autoComplete="off" placeholder="Subject Name" required
                                                 defaultValue=""
                                                 onChange={(e) => { console.log(e.target.value); }} />

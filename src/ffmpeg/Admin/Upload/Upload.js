@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Upload.scss';
 import axios from 'axios';
 import Loading from '../Loading/Loading';
+import { MDBIcon, MDBBtn } from "mdbreact";
 
 export default function Upload() {
     const baseurl = window.ffmpeg_baseurl;
@@ -148,7 +149,7 @@ export default function Upload() {
         <Container fluid className="C_Upload">
             <Row className="h-100 m-0">
                 <Col className="col-md-8 col-lg-6 pt-3">
-                    <Card bg="light" text="dark" border="secondary" >
+                    <Card>
                         <Card.Header>
                             Upload File <span className="loading-error">{getError}</span>
                             {
@@ -188,8 +189,12 @@ export default function Upload() {
                                         <p>Drag 'n' drop some file here, or click to select files</p>
                                     </div>
                                 </Form.Group>
-                                <Button type="submit">Submit</Button>
-                                <Button className="ml-2" type="button" onClick={Cancelupload}>Cancel Upload</Button>
+                                <MDBBtn type="submit" color="indigo" size="sm" >
+                                    <MDBIcon far icon="save" size="lg" />&nbsp;&nbsp;Submit
+                                </MDBBtn>
+                                <MDBBtn type="button" color="indigo" size="sm" onClick={Cancelupload}>
+                                    <MDBIcon icon="ban" />&nbsp;&nbsp;Cancel Upload
+                                </MDBBtn>
                             </Form>
                         </Card.Body>
                     </Card>

@@ -199,7 +199,7 @@ export default function Conversion(props) {
             setLoadPlayer(true);
         }
         else if ('attach' === e) {
-            console.log(contentID,'attach');
+            console.log(contentID, 'attach');
         }
     };
     const CreateKey = (contentID, callback) => {
@@ -411,19 +411,19 @@ export default function Conversion(props) {
                                             <Dropdown.Menu>
                                                 <Dropdown.Item href="#">
                                                     <ButtonGroup size="sm">
-                                                        <Button className="mr-1" onClick={() => { orderByThis('contentID', 'false'); }}>ID</Button>
+                                                        <Button style={{ marginRight: '.7rem' }} onClick={() => { orderByThis('contentID', 'false'); }}>ID</Button>
                                                         <Button onClick={() => { orderByThis('contentID', 'true'); }}>Desc</Button>
                                                     </ButtonGroup>
                                                 </Dropdown.Item>
                                                 <Dropdown.Item href="#">
                                                     <ButtonGroup size="sm">
-                                                        <Button className="mr-1" onClick={() => { orderByThis('contentTitle', 'false'); }}>Title</Button>
+                                                        <Button style={{ marginRight: '.7rem' }} onClick={() => { orderByThis('contentTitle', 'false'); }}>Title</Button>
                                                         <Button onClick={() => { orderByThis('contentTitle', 'true'); }}>Desc</Button>
                                                     </ButtonGroup>
                                                 </Dropdown.Item>
                                                 <Dropdown.Item href="#">
                                                     <ButtonGroup size="sm">
-                                                        <Button className="mr-1" onClick={() => { orderByThis('contentFileName', 'false'); }}>File Name</Button>
+                                                        <Button style={{ marginRight: '.7rem' }} onClick={() => { orderByThis('contentFileName', 'false'); }}>File Name</Button>
                                                         <Button onClick={() => { orderByThis('contentFileName', 'true'); }}>Desc</Button>
                                                     </ButtonGroup>
                                                 </Dropdown.Item>

@@ -11,6 +11,7 @@ import Admin from "./Admin/Admin";
 import Upload from "./Admin/Upload/Upload";
 import Conversion from "./Admin/Conversion/Conversion";
 import AddCsub from "./Admin/AddCsub/AddCsub";
+import AddChap from "./Admin/AddChap/AddChap";
 
 export default function Routes(props) {
     return (
@@ -27,7 +28,8 @@ export default function Routes(props) {
                 <Route path="/admin/upload" exact component={Upload} />
                 <Route path="/admin/conversion" exact component={Conversion} />
                 <Route path="/admin/addclsnsub" exact component={AddCsub} />
-                <Route path="/admin/mapchap" exact render={() => { return <h3>Mapping Chapter</h3> }} />
+                <Route path="/admin/addchap" exact component={AddChap} />
+                <Route path="/admin/test" exact render={() => { return <h3>Test</h3> }} />
             </Switch>
         </>
     );

@@ -13,19 +13,29 @@ export default function AddCsub() {
     // https://mdbootstrap.com/docs/react/content/icons-list/
     // https://mdbootstrap.com/docs/react/content/icons-usage/
     const baseurl = window.ffmpeg_baseurl;
-    const [getIsLoading_Sub, setIsLoading_Sub] = useState(false);
-    const [getError_Sub, setError_Sub] = useState('');
-
+    //#region Class
     const [getIsLoading_Cls, setIsLoading_Cls] = useState(false);
     const [getError_Cls, setError_Cls] = useState('');
-
     const [getAllCls, setAllClass] = useState([]);
-    const [getAllSub, setAllSub] = useState([]);
-
     let tblCls = useRef(null);
     let tblClsHeader = useRef(null);
+
+    const [getIsEditCls, setIsEditCls] = useState(false);
+    let txtCls = useRef(null);
+    let txtClsId = useRef(null);
+    //#endregion
+
+    //#region Subject
+    const [getIsLoading_Sub, setIsLoading_Sub] = useState(false);
+    const [getError_Sub, setError_Sub] = useState('');
+    const [getAllSub, setAllSub] = useState([]);
     let tblSub = useRef(null);
     let tblSubHeader = useRef(null);
+
+    const [getIsEditSub, setIsEditSub] = useState(false);
+    let txtSub = useRef(null);
+    let txtSubId = useRef(null);
+    //#endregion
 
     //#region Hooks 
     useEffect(() => {
@@ -35,7 +45,6 @@ export default function AddCsub() {
     //#endregion
     const loadClasses = () => {
         setIsLoading_Cls(true);
-        setError_Cls('Loading...');
         axios.get(`${baseurl}api/mpeg/getClasses`)
             .then(res => {
                 setAllClass(res.data.data);
@@ -63,30 +72,141 @@ export default function AddCsub() {
                 setError_Sub('Error loading Subject');
             });
     };
-    const Action_Click = ({ id }, e) => {
-        if ('edit_sub' === e) {
-            console.log(id, 'edit_sub');
-        }
-        else if ('delete_sub' === e) {
-            console.log(id, 'delete_sub');
-        }
-        else if ('add_sub' === e) {
-            console.log('add_sub');
-        }
-        else if ('edit_cls' === e) {
-            console.log(id, 'edit_cls');
-        }
-        else if ('delete_cls' === e) {
-            console.log(id, 'delete_cls');
+    const PostCls = ({ name, id, e }) => {
+        setIsLoading_Cls(true);
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        let body = null;
+        let post_url = null;
+
+        if ('update_cls' === e) {
+            body = { name, id };
+            post_url = `${baseurl}api/mpeg/PutClass`;
         }
         else if ('add_cls' === e) {
-            console.log('add_cls');
+            body = { name };
+            post_url = `${baseurl}api/mpeg/AddClass`;
+        }
+        else if ('delete_cls' === e) {
+            body = { id };
+            post_url = `${baseurl}api/mpeg/RemoveClass`;
+        }
+        if (post_url == null || body == null) return;
+        axios.post(post_url, body, config).then(res => {
+            setError_Cls(res.data.data);
+            // console.log(res);
+            loadClasses();
+        }).catch(err => {
+            // console.log(err);
+            setError_Cls('Error to save data');
+        });
+    };
+    const PostSub = ({ name, id, e }) => {
+        setIsLoading_Sub(true);
+        const config = {
+            headers: {
+                'content-type': 'application/json',
+            }
+        };
+        let body = null;
+        let post_url = null;
+
+        if ('update_sub' === e) {
+            body = { name, id };
+            post_url = `${baseurl}api/mpeg/PutSubject`;
+        }
+        else if ('add_sub' === e) {
+            body = { name };
+            post_url = `${baseurl}api/mpeg/AddSubject`;
+        }
+        else if ('delete_sub' === e) {
+            body = { id };
+            post_url = `${baseurl}api/mpeg/RemoveSubject`;
+        }
+        if (post_url == null || body == null) return;
+        axios.post(post_url, body, config).then(res => {
+            setError_Sub(res.data.data);
+            // console.log(res);
+            loadSubjects();
+        }).catch(err => {
+            // console.log(err);
+            setError_Sub('Error to save data');
+        });
+    };
+    const Action_Click = ({ id, className, subjectName }, e) => {
+        if ('edit_cls' === e) {
+            // console.log(id, className, 'edit_cls');
+            txtClsId.current.value = id;
+            txtCls.current.value = className;
+            setIsEditCls(true);
+            highlight_Edit(id);
+        }
+        else if ('update_cls' === e) {
+            // console.log('update_cls', txtClsId.current.value, txtCls.current.value);
+            if (txtCls.current.value == '') return;
+            if (txtClsId.current.value == '') return;
+            PostCls({ name: txtCls.current.value, id: txtClsId.current.value, e });
+            setTimeout(() => {
+                txtClsId.current.value = '';
+                txtCls.current.value = '';
+                setIsEditCls(false);
+                highlight_Edit(null);
+            }, 200);
+        }
+        else if ('delete_cls' === e) {
+            // console.log(id, 'delete_cls');
+            if (id == '') return;
+            PostCls({ id, e });
+        }
+        else if ('add_cls' === e) {
+            // console.log('add_cls', txtCls.current.value);
+            if (txtCls.current.value == '') return;
+            PostCls({ name: txtCls.current.value, e });
+            setTimeout(() => {
+                txtCls.current.value = '';
+            }, 200);
+        }
+        else if ('edit_sub' === e) {
+            // console.log(id, subjectName, 'edit_sub');
+            txtSubId.current.value = id;
+            txtSub.current.value = subjectName;
+            setIsEditSub(true);
+            highlight_Edit_Sub(id);
+        }
+        else if ('update_sub' === e) {
+            // console.log('update_sub', txtSubId.current.value, txtSub.current.value);
+            if (txtSub.current.value == '') return;
+            if (txtSubId.current.value == '') return;
+            PostSub({ name: txtSub.current.value, id: txtSubId.current.value, e });
+            setTimeout(() => {
+                txtSubId.current.value = '';
+                txtSub.current.value = '';
+                setIsEditSub(false);
+                highlight_Edit(null);
+                highlight_Edit_Sub(null);
+            }, 200);
+        }
+        else if ('delete_sub' === e) {
+            if (id == '') return;
+            PostSub({ id, e });
+        }
+        else if ('add_sub' === e) {
+            if (txtSub.current.value == '') return;
+            PostSub({ name: txtSub.current.value, e });
+            setTimeout(() => {
+                txtSub.current.value = '';
+            }, 200);
         }
     };
     const Calcwidth = (e) => {
         if ('cls' === e) {
+            if (typeof tblCls.current === 'undefined') return;
             let h = parseInt(tblCls.current.clientHeight);
             let h_parent = parseInt(tblCls.current.parentElement.clientHeight);
+            if (typeof tblClsHeader.current === 'undefined') return;
             if (h > h_parent) {
                 tblClsHeader.current.style.borderRight = '.9rem solid #cecece';
                 // tblClsHeader.current.style.width = '98%';
@@ -95,8 +215,10 @@ export default function AddCsub() {
                 // tblClsHeader.current.style.width = '100%';
             }
         } else if ('sub' === e) {
+            if (typeof tblSub.current === 'undefined') return;
             let h = parseInt(tblSub.current.clientHeight);
             let h_parent = parseInt(tblSub.current.parentElement.clientHeight);
+            if (typeof tblClsHeader.current === 'undefined') return;
             if (h > h_parent) {
                 tblSubHeader.current.style.borderRight = '.9rem solid #cecece';
             }
@@ -104,6 +226,20 @@ export default function AddCsub() {
                 tblSubHeader.current.style.borderRight = '0rem solid #cecece';
             }
         }
+    };
+    const highlight_Edit = (id) => {
+        document.querySelectorAll('.tr_cls').forEach(i => {
+            i.classList.remove('active');
+        });
+        if (id)
+            document.querySelector('.tr_cls_' + id).classList.add('active');
+    };
+    const highlight_Edit_Sub = (id) => {
+        document.querySelectorAll('.tr_sub').forEach(i => {
+            i.classList.remove('active');
+        });
+        if (id)
+            document.querySelector('.tr_sub_' + id).classList.add('active');
     };
 
     return (
@@ -133,7 +269,7 @@ export default function AddCsub() {
                             <tbody>
                                 {
                                     getAllCls.map((item, index) => {
-                                        return <tr key={index}>
+                                        return <tr key={index} className={'tr_cls tr_cls_' + item.id}>
                                             <td style={{ width: '10%' }}>{index + 1}</td>
                                             <td style={{ width: '70%' }}>{item.className}</td>
                                             <td style={{ width: '20%' }} className="actions">
@@ -160,16 +296,20 @@ export default function AddCsub() {
                                     <td style={{ width: '70%' }} className="py-1">
                                         <Form.Group controlId="Class_Name" className="my-0">
                                             <Form.Control type="text" autoComplete="off" placeholder="Class Name" required
-                                                defaultValue=""
-                                                onChange={(e) => { console.log(e.target.value); }} />
+                                                defaultValue="" ref={txtCls} />
                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                         </Form.Group>
                                     </td>
                                     <td className="actions py-1" style={{ width: '20%' }}>
-                                        <MDBBtn size="sm" onClick={() => Action_Click({}, 'add_cls')} color="indigo" className="btnAdd">
-                                            <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" /> Add
-                                        </MDBBtn>
-
+                                        <input type="hidden" ref={txtClsId} />
+                                        {getIsEditCls ?
+                                            <MDBBtn size="sm" onClick={() => Action_Click({}, 'update_cls')} color="indigo" className="btnAdd">
+                                                <MDBIcon size="lg" icon="save" className="ml-2" /> Update
+                                            </MDBBtn> :
+                                            <MDBBtn size="sm" onClick={() => Action_Click({}, 'add_cls')} color="indigo" className="btnAdd">
+                                                <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" /> Add
+                                            </MDBBtn>
+                                        }
                                     </td>
                                 </tr>
                             </thead>
@@ -200,7 +340,7 @@ export default function AddCsub() {
                             <tbody>
                                 {
                                     getAllSub.map((item, index) => {
-                                        return <tr key={index}>
+                                        return <tr key={index} className={'tr_sub tr_sub_' + item.id}>
                                             <td style={{ width: '10%' }}>{index + 1}</td>
                                             <td style={{ width: '70%' }}>{item.subjectName}</td>
                                             <td style={{ width: '20%' }} className="actions">
@@ -227,16 +367,20 @@ export default function AddCsub() {
                                     <td style={{ width: '70%' }} className="py-1">
                                         <Form.Group controlId="Subject_Name" className="my-0">
                                             <Form.Control type="text" autoComplete="off" placeholder="Subject Name" required
-                                                defaultValue=""
-                                                onChange={(e) => { console.log(e.target.value); }} />
+                                                defaultValue="" ref={txtSub} />
                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                         </Form.Group>
                                     </td>
                                     <td className="actions py-1" style={{ width: '20%' }}>
-                                        <MDBBtn size="sm" onClick={() => Action_Click({}, 'add_sub')} color="indigo" className="btnAdd">
-                                            <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" /> Add
-                                        </MDBBtn>
-
+                                        <input type="hidden" ref={txtSubId} />
+                                        {getIsEditSub ?
+                                            <MDBBtn size="sm" onClick={() => Action_Click({}, 'update_sub')} color="indigo" className="btnAdd">
+                                                <MDBIcon size="lg" icon="save" className="ml-2" /> Update
+                                            </MDBBtn> :
+                                            <MDBBtn size="sm" onClick={() => Action_Click({}, 'add_sub')} color="indigo" className="btnAdd">
+                                                <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" /> Add
+                                            </MDBBtn>
+                                        }
                                     </td>
                                 </tr>
                             </thead>

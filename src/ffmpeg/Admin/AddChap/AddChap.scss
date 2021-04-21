@@ -1,2 +1,59 @@
-.C_AddCsub {
+.C_AddChap {
+    .tblList-class {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    .actions {
+        div {
+            display: flex;
+            justify-content: space-around;
+        }
+        button {
+            border-width: 0;
+            background: transparent;
+        }
+        .btnAdd {
+            padding: 0.5rem 0.7rem;
+            i {
+                margin-right: 0.2rem;
+            }
+        }
+        .btnDelete {
+            color: #e04857;
+        }
+        .btnEdit {
+            color: #007bff;
+        }
+    }
+    .loading-error {
+        left: 25%;
+    }
+    .C_Loading {
+        right: 2rem;
+        top: 1.4rem;
+    }
+    .tr_cls.active,
+    .tr_sub.active {
+        background: #343a4047;
+    }
+    .pagination-wrapper {
+        ul {
+            display: flex;
+            flex-flow: wrap;
+        }
+    }
+    .lmt {
+        width: 200px;
+        td {
+            display: flex;
+            & > .y {
+                flex: 1;
+                display: flex;
+                align-items: center;
+            }
+            & > .x {
+                flex: 2;
+            }
+        }
+    }
 }

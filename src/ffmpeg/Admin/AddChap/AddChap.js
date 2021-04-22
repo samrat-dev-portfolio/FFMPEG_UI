@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef, Component } from 'react';
 import { Button, Col, Container, Form, Row, Card, Table, InputGroup, FormControl, Pagination, Dropdown, ButtonGroup } from "react-bootstrap";
 import axios from 'axios';
 import Loading from '../Loading/Loading';
-import { MDBIcon } from "mdbreact";
+import { MDBIcon, MDBBtn } from "mdbreact";
 import Select from 'react-select'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddChap.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
+import Add from './Add/Add';
 
 export default function AddChap() {
     // https://react-select.com/home
@@ -31,6 +32,7 @@ export default function AddChap() {
         { value: '50', label: '50' },
         { value: '100', label: '100' },
     ]
+    const [getshowAdd, setshowAdd] = useState(!false);
 
     //#region Hooks 
     useEffect(() => {
@@ -100,9 +102,28 @@ export default function AddChap() {
             return data;
         });
     };
+    const Action_Click = (item, e) => {
+        if ('add_new' == e) {
+            setshowAdd(true);
+        }
+        else if ('edit' == e) {
+            console.log(item)
+        }
+        else if ('remove' == e) {
+
+        }
+    };
+    const hideAddForm = () => {
+        setshowAdd(false);
+    };
 
     return (
         <Container fluid className="C_AddChap">
+            <Row>
+                {
+                    getshowAdd ? <Add onhide={hideAddForm}/> : null
+                }
+            </Row>
             <Row className="h-100 m-0">
                 <Col className="col-12 pt-3">
                     <span className="loading-error">{getError}</span>
@@ -110,11 +131,10 @@ export default function AddChap() {
                         getIsLoading ? <Loading /> : null
                     }
                 </Col>
-                <Col className="col-12 pt-3">
-                    <Table striped bordered hover>
+                <Col className="col-12">
+                    <Table striped bordered hover className="mb-0">
                         <thead>
                             <tr>
-                                <th style={{ width: '2%' }}>#</th>
                                 <th style={{ width: '35%' }}>
                                     <div className="td-filter-box">
                                         Chapter
@@ -171,7 +191,7 @@ export default function AddChap() {
                                         </InputGroup>
                                     </div>
                                 </th>
-                                <th style={{ width: '13%' }}>
+                                <th style={{ width: '15%' }}>
                                     <div className="td-filter-box">
                                         Action
                                     <Dropdown>
@@ -216,17 +236,16 @@ export default function AddChap() {
                                 {
                                     getRecords.map((item, index) => {
                                         return <tr key={index} className={'tr_cls tr_cls_' + item.id}>
-                                            <td style={{ width: '2%' }}>{index + 1}</td>
                                             <td style={{ width: '35%' }}>{item.chapterName}</td>
                                             <td style={{ width: '10%' }}>{item.classId}</td>
                                             <td style={{ width: '10%' }}>{item.subjectId}</td>
                                             <td style={{ width: '30%' }}>{item.contentID}</td>
-                                            <td style={{ width: '13%' }} className="actions">
+                                            <td style={{ width: '15%' }} className="actions">
                                                 <div>
-                                                    <button title="Change" className="btnEdit" type="button" onClick={() => console.log(item, 'change')}>
+                                                    <button title="Change" className="btnEdit" type="button" onClick={() => Action_Click(item, 'edit')}>
                                                         <MDBIcon size="lg" icon="edit mdb-gallery-view-icon" />
                                                     </button>
-                                                    <button title="Remove" className="btnDelete" type="button" onClick={() => console.log(item, 'remove')}>
+                                                    <button title="Remove" className="btnDelete" type="button" onClick={() => Action_Click(item, 'remove')}>
                                                         <MDBIcon size="lg" icon="trash-alt mdb-gallery-view-icon" />
                                                     </button>
                                                 </div>
@@ -252,6 +271,11 @@ export default function AddChap() {
                 </Col>
                 <Col className="col-8 pt-3 pagination-wrapper">
                     <Pagination size="sm">{getPageItems}</Pagination>
+                </Col>
+                <Col className="col-12 pt-3">
+                    <MDBBtn size="sm" onClick={() => Action_Click({}, 'add_new')} color="indigo" className="btnAdd">
+                        <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" />&nbsp; Add New
+                    </MDBBtn>
                 </Col>
             </Row>
         </Container>

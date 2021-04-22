@@ -441,7 +441,7 @@ export default function Conversion(props) {
                                         <td>{item.contentID}</td>
                                         <td>{item.contentTitle}</td>
                                         <td>{item.contentFileName}</td>
-                                        <td>{
+                                        <td className="action-box">{
                                             item.IsConversion == '0' ?
                                                 <span>
                                                     <Button variant="outline-info" size="sm" className="mr-1 mb-1" onClick={() => Start_Click(item, 'start')}>Start</Button>

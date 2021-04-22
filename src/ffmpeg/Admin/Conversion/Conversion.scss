@@ -25,4 +25,22 @@
             padding: .25rem .5rem;
         }
     }
+    .td-filter-box{
+        .dropdown-toggle {
+            padding: .5rem .6rem;
+            background-color: #f8f9fa;
+        }
+        .dropdown-item {
+            padding: 0;
+            button {
+                font-size: .75rem;
+                margin-top: 0;
+            }
+        }
+    }
+    .action-box {
+        .dropdown-toggle {
+            padding: .5rem .6rem;
+        }    
+    }
 }

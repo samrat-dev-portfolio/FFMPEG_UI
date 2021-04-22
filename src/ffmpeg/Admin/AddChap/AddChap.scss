@@ -1,8 +1,22 @@
 .C_AddChap {
+    .td-filter-box {
+        .dropdown-toggle {
+            padding: .5rem .6rem;
+            background-color: #f8f9fa;
+        }
+        .dropdown-item {
+            padding: 0;
+            button {
+                font-size: .75rem;
+                margin-top: 0;
+            }
+        }
+    }
     .tblList-class {
         max-height: 350px;
         overflow-y: auto;
     }
+
     .actions {
         div {
             display: flex;

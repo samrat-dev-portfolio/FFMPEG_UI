@@ -456,7 +456,7 @@ export default function Conversion(props) {
                                                             </Dropdown.Toggle>
                                                             <Dropdown.Menu>
                                                                 <Dropdown.Item onClick={() => Start_Click(item, 'play')}>Play</Dropdown.Item>
-                                                                <Dropdown.Item onClick={() => Start_Click(item, 'attach')}>Attach Chapter</Dropdown.Item>
+                                                                {/* <Dropdown.Item onClick={() => Start_Click(item, 'attach')}>Attach Chapter</Dropdown.Item> */}
                                                                 <Dropdown.Item className="danger" onClick={() => Start_Click(item, 'delete')}>Delete</Dropdown.Item>
                                                             </Dropdown.Menu>
                                                         </Dropdown>

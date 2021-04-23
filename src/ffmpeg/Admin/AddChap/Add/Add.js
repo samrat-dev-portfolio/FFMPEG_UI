@@ -10,15 +10,28 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 
-export default function Add({ onhide }) {
+export default function Add({ onhide, data }) {
     // https://react-select.com/home
     const baseurl = window.ffmpeg_baseurl;
     const [getIsLoading, setIsLoading] = useState(false);
     const [getError, setError] = useState('');
     const [validated, setValidated] = useState(false);
-
+    const txtChapterId = useRef(null);
     //#region Hooks 
     useEffect(() => {
+        console.log(data);
+        if ('add' == data.e) {
+            loadClasses();
+            loadSubjects();
+        }
+        else if ('edit' == data.e) {
+            const { id, chapterName, classId, subjectId, contentID } = data.data;
+            txtChapterId.current.value = id;
+            elmChapter.current.value = chapterName;
+            // console.log(data.data)
+            loadClasses(classId);
+            loadSubjects(subjectId);
+        }
 
     }, []);
     //#endregion
@@ -33,13 +46,39 @@ export default function Add({ onhide }) {
             setError("Please provide all field");
             setIsLoading(false);
         } else {
-            const post_data = { chapter_name: elmChapter.current.value, subject_id: getSelSubject.value, class_id: getSelClass.value, content_id: getSelContentID.value };
+            const post_data = { id: txtChapterId.current.value, chapterName: elmChapter.current.value, subjectId: getSelSubject != null ? getSelSubject.value : null, classId: getSelClass != null ? getSelClass.value : null, contentID: getSelContentID != null ? getSelContentID.value : null };
             console.log(post_data);
+            const config = {
+                headers: {
+                    'content-type': 'application/json',
+                }
+            };
+            let body = null;
+            let post_url = null;
+            if ('add' == data.e) {
+                body = { ...post_data };
+                post_url = `${baseurl}api/mpeg/AddChapter`;
+            }
+            if ('edit' == data.e) {
+                body = { ...post_data };
+                post_url = `${baseurl}api/mpeg/PutChapter`;
+            }
+            if (post_url == null || body == null) return;
+            axios.post(post_url, body, config).then(res => {
+                setError(res.data.data);
+                setIsLoading(false);
+                onhide();
+                // console.log(res);
+            }).catch(err => {
+                // console.log(err);
+                setIsLoading(false);
+                setError_Cls('Error to save data');
+            });
         }
         setValidated(true);
         isValidate_Subject(getSelSubject);
         isValidate_Class(getSelClass);
-        isValidate_ContentID(getSelContentID);
+        // isValidate_ContentID(getSelContentID);
     };
     const elmChapter = useRef(null);
     //#region Subject Vars
@@ -59,6 +98,26 @@ export default function Add({ onhide }) {
     const isValidate_Subject = (data) => {
         LooksGoodShowHide(data, elmSubject, isValidate_Subject_Init);
     };
+    const [getAllSub, setAllSub] = useState([]);
+    const loadSubjects = (_id) => {
+        setIsLoading(true);
+        setError('Loading...');
+        axios.get(`${baseurl}api/mpeg/getSubject`)
+            .then(res => {
+                setIsLoading(false);
+                setError('');
+                // console.log(res.data.data);
+                var data = res.data.data.map(({ id, subjectName }) => {
+                    return { value: id, label: subjectName }
+                });
+                setAllSub(data);
+                var selOption = data.find(i => i.value == _id);
+                setSelSubject(selOption);
+            }).catch(err => {
+                setIsLoading(false);
+                setError('Error loading Subject');
+            });
+    };
     //#endregion
 
     //#region Class Vars
@@ -77,6 +136,26 @@ export default function Add({ onhide }) {
     const isValidate_Class_Init = useRef(false);
     const isValidate_Class = data => {
         LooksGoodShowHide(data, elmClass, isValidate_Class_Init);
+    };
+    const [getAllCls, setAllClass] = useState([]);
+    const loadClasses = (_id) => {
+        setIsLoading(true);
+        setError('Loading...');
+        axios.get(`${baseurl}api/mpeg/getClasses`)
+            .then(res => {
+                setIsLoading(false);
+                setError('');
+                // console.log(res.data.data);
+                var data = res.data.data.map(({ id, className }) => {
+                    return { value: id, label: className }
+                });
+                setAllClass(data);
+                var selOption = data.find(i => i.value == _id);
+                setSelClass(selOption);
+            }).catch(err => {
+                setIsLoading(false);
+                setError('Error loading Class');
+            });
     };
     //#endregion
 
@@ -132,6 +211,7 @@ export default function Add({ onhide }) {
                         </Card.Header>
                         <Card.Body>
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                <input type="text" ref={txtChapterId} />
                                 <Form.Group controlId="chapterName">
                                     <Form.Label>Chapter Name</Form.Label>
                                     <Form.Control type="text" defaultValue="" ref={elmChapter} placeholder="Chapter Name" required />
@@ -139,12 +219,12 @@ export default function Add({ onhide }) {
                                 </Form.Group>
                                 <Form.Group controlId="subject">
                                     <Form.Label>Subject</Form.Label>
-                                    <Select value={getSelSubject} options={Subject_options} onChange={handleChange_Subject} ref={elmSubject} />
+                                    <Select value={getSelSubject} options={getAllSub} onChange={handleChange_Subject} ref={elmSubject} />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group controlId="class">
                                     <Form.Label>Class</Form.Label>
-                                    <Select value={getSelClass} options={Class_options} onChange={handleChange_Class} ref={elmClass} />
+                                    <Select value={getSelClass} options={getAllCls} onChange={handleChange_Class} ref={elmClass} />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group controlId="contentID">

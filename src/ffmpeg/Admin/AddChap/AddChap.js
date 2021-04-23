@@ -20,26 +20,25 @@ export default function AddChap() {
     const [getRecords, setRecords] = useState([]);
     const [getSelectedLimit, setSelectedLimit] = useState(null);
     let tblRecords = useRef(null);
-
     const [getPageItems, setPageItems] = useState([]);
     const [getChapterParams, setChapterParams] = useState({
         "pageindex": 0,
         "limit": 10
     });
     const Limitoptions = [
-        { value: '5', label: '5' },
         { value: '10', label: '10' },
         { value: '50', label: '50' },
         { value: '100', label: '100' },
     ]
-    const [getshowAdd, setshowAdd] = useState(!false);
+    const [getshowAdd, setshowAdd] = useState(false);
+    const [getAddData, setAddData] = useState({});
 
     //#region Hooks 
     useEffect(() => {
         loadChapters(getChapterParams);
         setSelectedLimit({ value: '10', label: '10' });
     }, []);
-    //#endregion
+    //#endregion  
     const loadChapters = (_params) => {
         setIsLoading(true);
         setError('Loading...');
@@ -104,16 +103,30 @@ export default function AddChap() {
     };
     const Action_Click = (item, e) => {
         if ('add_new' == e) {
+            setAddData({
+                e: 'add'
+            });
             setshowAdd(true);
         }
         else if ('edit' == e) {
-            console.log(item)
+            console.log(item);
+            setAddData({
+                e: 'edit',
+                data: item
+            });
+            setshowAdd(true);
         }
         else if ('remove' == e) {
-
+            console.log(item);
+            setAddData({
+                e: 'remove',
+                data: item
+            });
+            setshowAdd(true);
         }
     };
     const hideAddForm = () => {
+        loadChapters(getChapterParams);
         setshowAdd(false);
     };
 
@@ -121,7 +134,7 @@ export default function AddChap() {
         <Container fluid className="C_AddChap">
             <Row>
                 {
-                    getshowAdd ? <Add onhide={hideAddForm}/> : null
+                    getshowAdd ? <Add onhide={hideAddForm} data={getAddData} /> : null
                 }
             </Row>
             <Row className="h-100 m-0">
@@ -276,6 +289,11 @@ export default function AddChap() {
                     <MDBBtn size="sm" onClick={() => Action_Click({}, 'add_new')} color="indigo" className="btnAdd">
                         <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" />&nbsp; Add New
                     </MDBBtn>
+                    <p>
+                        delete fn baki, <br /> 
+                        contentid load which is not set, <br /> 
+                        show class-sub-name instead of id
+                    </p>
                 </Col>
             </Row>
         </Container>

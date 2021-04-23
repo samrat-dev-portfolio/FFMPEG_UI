@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Container, Col, Row, Table, Button, InputGroup, FormControl, Pagination, Dropdown, ButtonGroup } from 'react-bootstrap';
 import './Conversion.scss';
+import Select from 'react-select'
 import axios from 'axios';
 import Modal from '../Modal/Modal';
 import Loading from '../Loading/Loading';
@@ -11,6 +12,7 @@ export default function Conversion(props) {
     const [getIsLoading, setIsLoading] = useState(false);
     const [getError, setError] = useState('');
     const [getContent, setContent] = useState([]);
+    const [getSelectedLimit, setSelectedLimit] = useState(null);
     let CProgressTimer = useRef(null);
     let LazyKeyupTimer = useRef(null);
     let contentInput = useRef(null);
@@ -23,8 +25,14 @@ export default function Conversion(props) {
     const [getPageItems, setPageItems] = useState([]);
     const [getContentParams, setContentParams] = useState({
         "pageindex": 0,
-        "limit": 7
+        "limit": 5
     });
+    const Limitoptions = [
+        { value: '5', label: '5' },
+        { value: '10', label: '10' },
+        { value: '50', label: '50' },
+        { value: '100', label: '100' }
+    ];
 
     const [getLoadPlayer, setLoadPlayer] = useState(false);
     const [getPlayerContentID, setPlayerContentID] = useState(null);
@@ -32,6 +40,7 @@ export default function Conversion(props) {
     //#region Hooks 
     useEffect(() => {
         loadContent(getContentParams);
+        setSelectedLimit({ value: '5', label: '5' });
     }, []);
     //#endregion
 
@@ -100,6 +109,14 @@ export default function Conversion(props) {
         setContentParams(prevData => {
             let data = { ...prevData, orderby, desc };
             // console.log(data);
+            loadContent(data);
+            return data;
+        });
+    };
+    const handleChange_limit = (e) => {
+        setSelectedLimit(e);
+        setContentParams(prevData => {
+            let data = { ...prevData, "limit": e.value, "pageindex": 0 };
             loadContent(data);
             return data;
         });
@@ -359,7 +376,6 @@ export default function Conversion(props) {
                     <Table striped bordered hover>
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>
                                     <div className="td-filter-box">
                                         Content ID
@@ -437,7 +453,6 @@ export default function Conversion(props) {
                             {
                                 getContent.map((item, index) => {
                                     return <tr key={index}>
-                                        <td>{index + 1}</td>
                                         <td>{item.contentID}</td>
                                         <td>{item.contentTitle}</td>
                                         <td>{item.contentFileName}</td>
@@ -478,7 +493,19 @@ export default function Conversion(props) {
                         </tbody>
                     </Table>
                 </Col>
-                <Col className="col-12 pt-3">
+                <Col className="col-4 pt-3">
+                    <table className="lmt">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div className="y"> Limit: </div>
+                                    <Select value={getSelectedLimit} className="x" options={Limitoptions} onChange={handleChange_limit} />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </Col>
+                <Col className="col-8 pt-3 pagination-wrapper">
                     <Pagination size="sm">{getPageItems}</Pagination>
                 </Col>
             </Row>

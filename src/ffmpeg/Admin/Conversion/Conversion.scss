@@ -39,8 +39,37 @@
         }
     }
     .action-box {
+        padding-right: 0;
+        padding-left: 0;
+        & > span {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+        }
         .dropdown-toggle {
             padding: .5rem .6rem;
+            margin: 0;
         }    
+    }
+    .pagination-wrapper {
+        ul {
+            display: flex;
+            flex-flow: wrap;
+        }
+    }
+    .lmt {
+        width: 200px;
+        td {
+            display: flex;
+            & > .y {
+                flex: 1;
+                display: flex;
+                align-items: center;
+            }
+            & > .x {
+                flex: 2;
+            }
+        }
     }
 }

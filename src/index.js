@@ -23,4 +23,11 @@ import axios from 'axios';
 // });
 //#endregion
 console.clear();
+let publish = window.publish || false;
+if(publish == true){
+    window.ffmpeg_baseurl = window.location.origin + "/";
+} else {
+    window.ffmpeg_baseurl = "http://localhost:50017/";
+}
+
 ReactDOM.render(<App />, document.getElementById('root'));

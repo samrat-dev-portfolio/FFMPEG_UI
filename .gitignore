@@ -68,3 +68,36 @@ node_modules/
 #developer choice
 src/containers/Blog
 
+build/asset-manifest.json
+build/favicon.ico
+build/index.html
+build/manifest.json
+build/static/css/2.35c34c7b.chunk.css
+build/static/css/2.35c34c7b.chunk.css.map
+build/static/css/main.1c3221a9.chunk.css
+build/static/css/main.1c3221a9.chunk.css.map
+build/static/js/2.55d30bf4.chunk.js
+build/static/js/2.55d30bf4.chunk.js.LICENSE.txt
+build/static/js/2.55d30bf4.chunk.js.map
+build/static/js/main.e6c46910.chunk.js
+build/static/js/main.e6c46910.chunk.js.map
+build/static/js/runtime-main.f60bdb19.js
+build/static/js/runtime-main.f60bdb19.js.map
+build/static/media/arrow_left.2b063d13.svg
+build/static/media/arrow_right.0897f985.svg
+build/static/media/e-bg-1.38696b84.png
+build/static/media/fa-brands-400.9e138496.ttf
+build/static/media/fa-brands-400.89a52ae1.eot
+build/static/media/fa-brands-400.216edb96.svg
+build/static/media/fa-brands-400.329a95a9.woff
+build/static/media/fa-brands-400.c1210e5e.woff2
+build/static/media/fa-regular-400.19e27d34.svg
+build/static/media/fa-regular-400.68c5af1f.woff2
+build/static/media/fa-regular-400.1017bce8.ttf
+build/static/media/fa-regular-400.4079ae2d.eot
+build/static/media/fa-regular-400.36722648.woff
+build/static/media/fa-solid-900.07c3313b.ttf
+build/static/media/fa-solid-900.13de59f1.svg
+build/static/media/fa-solid-900.ada6e6df.woff2
+build/static/media/fa-solid-900.c6ec0800.woff
+build/static/media/fa-solid-900.efbd5d20.eot

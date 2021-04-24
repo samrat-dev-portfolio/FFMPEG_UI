@@ -3,12 +3,12 @@ import { HashRouter as Router } from 'react-router-dom'; // BrowserRouter  HashR
 
 import Routes from './ffmpeg/Routes';
 
-class App extends Component {  
+class App extends Component {
   render() {
     return (
       <Router>
         <div className="App">
-          <Routes />          
+          <Routes />
         </div>
       </Router>
     );

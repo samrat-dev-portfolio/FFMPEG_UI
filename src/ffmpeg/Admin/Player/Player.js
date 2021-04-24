@@ -15,7 +15,9 @@ export default function Player({ show, onhide, contentID, chapter }) {
     const playerRef = React.useRef();
     const playerWrapperRef = React.useRef();
     const [getM3u8Url, setM3u8Url] = useState('');
+    useEffect(() => {
 
+    }, []);
     const playVideo = () => {
         playerRef.current.play();
     };
@@ -24,6 +26,12 @@ export default function Player({ show, onhide, contentID, chapter }) {
     };
     const toggleControls = () => {
         playerRef.current.controls = !playerRef.current.controls;
+    };
+    const endedVideo = () => {
+        playerRef.current.classList.add('fadex');
+        setTimeout(() => {
+            onhide();
+        }, 3100);
     };
     const Resize = () => {
         var actualWidth = window.innerWidth ||
@@ -84,7 +92,7 @@ export default function Player({ show, onhide, contentID, chapter }) {
                 <MDBContainer className="text-center">
                     <Row className="header">
                         <Col className="col-12 p-0">
-                            <p className="m-0 h-100">{chapter}</p>
+                            <p className="m-0 h-100">&nbsp;{chapter}</p>
                             <MDBBtn className="exit" color="mdb-color" size="sm" onClick={onhide}>
                                 <MDBIcon icon="times-circle" />&nbsp;&nbsp;Close
                             </MDBBtn>
@@ -101,6 +109,7 @@ export default function Player({ show, onhide, contentID, chapter }) {
                                 controls={true}
                                 width="100%"
                                 height="auto"
+                                onEnded={endedVideo}
                             /> : null
                         }
                     </Row>

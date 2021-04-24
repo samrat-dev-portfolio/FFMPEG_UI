@@ -24,7 +24,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding-top: .7rem;
+                padding-top: 0.7rem;
+                padding-bottom: 0.4rem;
             }
             .exit {
                 position: absolute;
@@ -33,14 +34,29 @@
             }
         }
         .player-body {
-            background: #1f2933d4; 
+            background: #1f2933d4;
             border-radius: 0 0 6px 6px;
-            padding: .6rem;  
+            padding: 0 0.6rem 0.6rem 0.6rem;
             video {
                 &:focus {
                     outline: 0;
                 }
             }
         }
+        .fadex {
+            animation-name: anim_fadex;
+            animation-duration: 3s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-in-out;
+        }
+    }
+}
+
+@keyframes anim_fadex {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }

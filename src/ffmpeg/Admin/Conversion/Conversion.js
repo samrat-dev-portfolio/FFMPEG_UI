@@ -6,6 +6,7 @@ import axios from 'axios';
 import Modal from '../Modal/Modal';
 import Loading from '../Loading/Loading';
 import Player from './../Player/Player';
+import Add from '../AddChap/Add/Add';
 
 export default function Conversion(props) {
     const baseurl = window.ffmpeg_baseurl;
@@ -36,6 +37,9 @@ export default function Conversion(props) {
 
     const [getLoadPlayer, setLoadPlayer] = useState(false);
     const [getPlayerContentID, setPlayerContentID] = useState(null);
+
+    const [getshowAdd, setshowAdd] = useState(false);
+    const [getAddData, setAddData] = useState({});
 
     //#region Hooks 
     useEffect(() => {
@@ -216,7 +220,7 @@ export default function Conversion(props) {
             setLoadPlayer(true);
         }
         else if ('attach' === e) {
-            console.log(contentID, 'attach');
+
         }
     };
     const CreateKey = (contentID, callback) => {
@@ -360,11 +364,19 @@ export default function Conversion(props) {
     const hidePlayer = () => {
         setLoadPlayer(false);
     };
+    const hideAddForm = () => {
+        setshowAdd(false);
+    };
 
     return (
         <Container fluid className="C_Conversion">
             <Player show={getLoadPlayer} contentID={getPlayerContentID} onhide={hidePlayer} />
             <Modal show={getShowModal} list={getModalData} onhide={hideModal} hide_visible={getShowModalHideBtn} />
+            <Row>
+                {
+                    getshowAdd ? <Add onhide={hideAddForm} data={getAddData} /> : null
+                }
+            </Row>
             <Row className="h-100 m-0">
                 <Col className="col-12 pt-3">
                     <span className="loading-error">{getError}</span>

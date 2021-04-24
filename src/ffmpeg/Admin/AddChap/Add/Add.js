@@ -19,18 +19,22 @@ export default function Add({ onhide, data }) {
     const txtChapterId = useRef(null);
     //#region Hooks 
     useEffect(() => {
-        console.log(data);
+        // console.log(data);
         if ('add' == data.e) {
             loadClasses();
             loadSubjects();
+            loadContents();
         }
         else if ('edit' == data.e) {
             const { id, chapterName, classId, subjectId, contentID } = data.data;
             txtChapterId.current.value = id;
             elmChapter.current.value = chapterName;
-            // console.log(data.data)
             loadClasses(classId);
             loadSubjects(subjectId);
+            loadContents(contentID);
+        }
+        else if ('attach' == data.e) {
+         
         }
 
     }, []);
@@ -47,7 +51,7 @@ export default function Add({ onhide, data }) {
             setIsLoading(false);
         } else {
             const post_data = { id: txtChapterId.current.value, chapterName: elmChapter.current.value, subjectId: getSelSubject != null ? getSelSubject.value : null, classId: getSelClass != null ? getSelClass.value : null, contentID: getSelContentID != null ? getSelContentID.value : null };
-            console.log(post_data);
+            // console.log(post_data);
             const config = {
                 headers: {
                     'content-type': 'application/json',
@@ -55,7 +59,7 @@ export default function Add({ onhide, data }) {
             };
             let body = null;
             let post_url = null;
-            if ('add' == data.e) {
+            if ('add' == data.e || 'attach' == data.e) {
                 body = { ...post_data };
                 post_url = `${baseurl}api/mpeg/AddChapter`;
             }
@@ -176,6 +180,32 @@ export default function Add({ onhide, data }) {
     const isValidate_ContentID = data => {
         LooksGoodShowHide(data, elmContentID, isValidate_ContentID_Init);
     };
+    const [getAllContents, setAllContents] = useState([]);
+    const loadContents = (_id) => {
+        setIsLoading(true);
+        setError('Loading...');
+        const _params = {
+            _id
+        };
+        axios.get(`${baseurl}api/mpeg/getContent`, {
+            params: _params
+        })
+            .then(res => {
+                setIsLoading(false);
+                setError('');
+                // console.log(res.data.data);
+                var data = res.data.data.map(({ contentID }) => {
+                    return { value: contentID, label: contentID }
+                });
+                data.unshift({ value: null, label: 'None' });
+                setAllContents(data);
+                var selOption = data.find(i => i.value == _id);
+                setSelContentID(selOption);
+            }).catch(err => {
+                setIsLoading(false);
+                setError('Error loading Class');
+            });
+    };
     //#endregion
 
     const LooksGoodShowHide = (data, refElm, refValidateInit) => {
@@ -211,7 +241,7 @@ export default function Add({ onhide, data }) {
                         </Card.Header>
                         <Card.Body>
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                <input type="text" ref={txtChapterId} />
+                                <input type="hidden" ref={txtChapterId} />
                                 <Form.Group controlId="chapterName">
                                     <Form.Label>Chapter Name</Form.Label>
                                     <Form.Control type="text" defaultValue="" ref={elmChapter} placeholder="Chapter Name" required />
@@ -229,7 +259,7 @@ export default function Add({ onhide, data }) {
                                 </Form.Group>
                                 <Form.Group controlId="contentID">
                                     <Form.Label>content ID</Form.Label>
-                                    <Select value={getSelContentID} options={ContentID_options} onChange={handleChange_ContentID} ref={elmContentID} />
+                                    <Select value={getSelContentID} options={getAllContents} onChange={handleChange_ContentID} ref={elmContentID} />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 </Form.Group>
                                 <MDBBtn type="submit" color="indigo" size="sm" >

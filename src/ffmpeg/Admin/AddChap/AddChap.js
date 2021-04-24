@@ -20,6 +20,7 @@ export default function AddChap() {
     const [getRecords, setRecords] = useState([]);
     const [getSelectedLimit, setSelectedLimit] = useState(null);
     let tblRecords = useRef(null);
+    let LazyKeyupTimer = useRef(null);
     const [getPageItems, setPageItems] = useState([]);
     const [getChapterParams, setChapterParams] = useState({
         "pageindex": 0,
@@ -84,14 +85,57 @@ export default function AddChap() {
     };
     const orderByThis = (orderby, desc) => {
         setChapterParams(prevData => {
-            let data = { ...prevData, orderby, desc };
+            let data = { ...prevData, orderby, desc,"pageindex": 0 };
             // console.log(data);
             loadChapters(data);
             return data;
         });
     };
     const searchBy = (_val, e) => {
-        console.log(_val, e);
+        // console.log(_val, e);
+        if ('chap' == e) {
+            LazyKeyup(() => {
+                setChapterParams(prevData => {
+                    let data = { ...prevData, "chapterName": _val, "pageindex": 0 };
+                    loadChapters(data);
+                    return data;
+                });
+            });
+        }
+        else if ('cls' == e) {
+            LazyKeyup(() => {
+                setChapterParams(prevData => {
+                    let data = { ...prevData, "className": _val, "pageindex": 0 };
+                    loadChapters(data);
+                    return data;
+                });
+            });
+        }
+        else if ('sub' == e) {
+            LazyKeyup(() => {
+                setChapterParams(prevData => {
+                    let data = { ...prevData, "subjectName": _val, "pageindex": 0 };
+                    loadChapters(data);
+                    return data;
+                });
+            });
+        }
+        else if ('content_id' == e) {
+            LazyKeyup(() => {
+                setChapterParams(prevData => {
+                    let data = { ...prevData, "contentID": _val, "pageindex": 0 };
+                    loadChapters(data);
+                    return data;
+                });
+            });
+        }
+    };
+    const LazyKeyup = (_callback) => {
+        clearTimeout(LazyKeyupTimer.current);
+        LazyKeyupTimer.current = setTimeout(() => {
+            _callback();
+            // _callback.call(this, _args);
+        }, 1000);
     };
     const handleChange_limit = (e) => {
         setSelectedLimit(e);
@@ -109,7 +153,6 @@ export default function AddChap() {
             setshowAdd(true);
         }
         else if ('edit' == e) {
-            console.log(item);
             setAddData({
                 e: 'edit',
                 data: item
@@ -117,12 +160,25 @@ export default function AddChap() {
             setshowAdd(true);
         }
         else if ('remove' == e) {
-            console.log(item);
-            setAddData({
-                e: 'remove',
-                data: item
+            if (!confirm('are you sure to delete?')) return;
+            const config = {
+                headers: {
+                    'content-type': 'application/json',
+                }
+            };
+            let body = { id: item.id };
+            let post_url = `${baseurl}api/mpeg/RemoveChapter`;
+            if (post_url == null || body == null) return;
+            axios.post(post_url, body, config).then(res => {
+                setError(res.data.data);
+                setIsLoading(false);
+                loadChapters(getChapterParams);
+                // console.log(res);
+            }).catch(err => {
+                // console.log(err);
+                setIsLoading(false);
+                setError_Cls('Error to delete data');
             });
-            setshowAdd(true);
         }
     };
     const hideAddForm = () => {
@@ -148,7 +204,7 @@ export default function AddChap() {
                     <Table striped bordered hover className="mb-0">
                         <thead>
                             <tr>
-                                <th style={{ width: '35%' }}>
+                                <th style={{ width: '30%' }} className="px-1">
                                     <div className="td-filter-box">
                                         Chapter
                                     <InputGroup size="sm" className="">
@@ -162,10 +218,10 @@ export default function AddChap() {
                                         </InputGroup>
                                     </div>
                                 </th>
-                                <th style={{ width: '10%' }}>
+                                <th style={{ width: '10%' }} className="px-1">
                                     <div className="td-filter-box">
                                         Class
-                                    <InputGroup size="sm" className="">
+                                    <InputGroup size="sm">
                                             <FormControl
                                                 placeholder="Search"
                                                 aria-label=""
@@ -176,7 +232,7 @@ export default function AddChap() {
                                         </InputGroup>
                                     </div>
                                 </th>
-                                <th style={{ width: '10%' }}>
+                                <th style={{ width: '15%' }} className="px-1">
                                     <div className="td-filter-box">
                                         Subject
                                     <InputGroup size="sm" className="">
@@ -190,7 +246,7 @@ export default function AddChap() {
                                         </InputGroup>
                                     </div>
                                 </th>
-                                <th style={{ width: '30%' }}>
+                                <th style={{ width: '30%' }} className="px-1">
                                     <div className="td-filter-box">
                                         Content ID
                                     <InputGroup size="sm" className="">
@@ -204,11 +260,11 @@ export default function AddChap() {
                                         </InputGroup>
                                     </div>
                                 </th>
-                                <th style={{ width: '15%' }}>
+                                <th style={{ width: '15%' }} className="px-1">
                                     <div className="td-filter-box">
                                         Action
                                     <Dropdown>
-                                            <Dropdown.Toggle size="sm" variant="light" id="dropdown-basic">
+                                            <Dropdown.Toggle size="sm" variant="light" id="dropdown-basic" className="w-100 m-0">
                                                 Sort By &nbsp;&nbsp;
                                         </Dropdown.Toggle>
                                             <Dropdown.Menu>
@@ -249,9 +305,9 @@ export default function AddChap() {
                                 {
                                     getRecords.map((item, index) => {
                                         return <tr key={index} className={'tr_cls tr_cls_' + item.id}>
-                                            <td style={{ width: '35%' }}>{item.chapterName}</td>
-                                            <td style={{ width: '10%' }}>{item.classId}</td>
-                                            <td style={{ width: '10%' }}>{item.subjectId}</td>
+                                            <td style={{ width: '30%' }}>{item.chapterName}</td>
+                                            <td style={{ width: '10%' }}>{item.className}</td>
+                                            <td style={{ width: '15%' }}>{item.subjectName}</td>
                                             <td style={{ width: '30%' }}>{item.contentID}</td>
                                             <td style={{ width: '15%' }} className="actions">
                                                 <div>
@@ -290,12 +346,11 @@ export default function AddChap() {
                         <MDBIcon size="lg" icon="plus-circle mdb-gallery-view-icon" className="ml-2" />&nbsp; Add New
                     </MDBBtn>
                     <p>
-                        delete fn baki, <br /> 
-                        contentid load which is not set, <br /> 
-                        show class-sub-name instead of id
+                        <br />
                     </p>
                 </Col>
             </Row>
         </Container>
     )
 }
+

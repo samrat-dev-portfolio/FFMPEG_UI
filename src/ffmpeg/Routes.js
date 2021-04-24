@@ -18,8 +18,8 @@ export default function Routes(props) {
         <>
             <Route path="/" exact>
                 {
-                    // <Entry />
-                    <Admin />
+                    <Entry />
+                    // <Admin />
                 }
             </Route>
             <Route path="/admin" component={Admin} />

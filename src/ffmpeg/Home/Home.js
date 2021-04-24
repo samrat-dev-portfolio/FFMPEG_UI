@@ -6,6 +6,7 @@ import Header from './Header/Header';
 import './Home.scss';
 import Content from './Content/Content';
 import axios from 'axios';
+import Player from '../Admin/Player/Player';
 
 export default function Home(props) {
     const baseurl = window.ffmpeg_baseurl;
@@ -139,6 +140,10 @@ export default function Home(props) {
     const click_chapterItem = (_e, _item) => {
         setSelectedChapterName(_item.chapterName);
         highlight(_e, 'chapter_highlight');
+        if(_item.contentID == null) return;
+        setPlayerContentID(_item.contentID);
+        setPlayerTitle(_item.chapterName);
+        setLoadPlayer(true);
     };
     const highlight = (_e, _className) => {
         var _target = _e.target;
@@ -155,8 +160,19 @@ export default function Home(props) {
     }
     //#endregion
 
+    //#region Player
+    const [getLoadPlayer, setLoadPlayer] = useState(false);
+    const [getPlayerContentID, setPlayerContentID] = useState(null);
+    const [getPlayerTitle, setPlayerTitle] = useState(null);
+    const hidePlayer = () => {
+        setLoadPlayer(false);
+        setPlayerContentID(null);
+        setPlayerTitle(null);
+    };
+    //#endregion
     return (
         <>
+            <Player chapter={getPlayerTitle} show={getLoadPlayer} contentID={getPlayerContentID} onhide={hidePlayer} />
             <Header selected_class={getSelectedClassName} selected_chapter={getSelectedChapterName} />
             <Content
                 my_class={getClasses_view()} loading_class={getLoading_class}

@@ -1,40 +1,45 @@
 .C_Player {
-    border: 1px solid #e9e9e9;
+    // border: 1px solid #e9e9e9;
     position: absolute;
-    height: 90%;
-    width: 99.5%;
+    height: 100%;
+    width: 100%;
     padding: 0;
     left: 0;
     z-index: 100;
     box-sizing: border-box;
     backdrop-filter: blur(3px);
-    box-shadow: 3px 4px 7px 0px #d8d0d0;
+    // box-shadow: 3px 4px 7px 0px #d8d0d0;
     border-radius: 9px;
     overflow: hidden;
 
     .player-wrapper {
         margin: auto;
         position: relative;
-        .closexx {
-            position: absolute;
-            right: -0.7rem;
-            top: -0.7rem;
-            background: transparent;
-            z-index: 999;
-            padding: 0;
-            border: 0;
-            opacity: 0;
-            transition: all 0.5s ease;
 
-            img {
-                box-shadow: inset 0 0 10px 11px #007bff4f;
-                border-radius: 36px;
+        .header {
+            background: #1f2933d4;
+            border-radius: 6px 6px 0 0;
+            p {
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: .7rem;
+            }
+            .exit {
+                position: absolute;
+                right: 0;
+                top: 0;
             }
         }
-        &:hover {
-            .closexx {
-                opacity: 0.8;
-                transition: all 0.7s ease;
+        .player-body {
+            background: #1f2933d4; 
+            border-radius: 0 0 6px 6px;
+            padding: .6rem;  
+            video {
+                &:focus {
+                    outline: 0;
+                }
             }
         }
     }

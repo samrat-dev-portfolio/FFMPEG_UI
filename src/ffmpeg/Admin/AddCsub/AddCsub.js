@@ -8,6 +8,7 @@ import './AddCsub.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
+import { ToastAlert } from '../Toast/Toast';
 
 export default function AddCsub() {
     // https://mdbootstrap.com/docs/react/content/icons-list/
@@ -98,6 +99,7 @@ export default function AddCsub() {
         axios.post(post_url, body, config).then(res => {
             setError_Cls(res.data.data);
             // console.log(res);
+            ToastAlert(res.data.data, 'info');
             loadClasses();
         }).catch(err => {
             // console.log(err);

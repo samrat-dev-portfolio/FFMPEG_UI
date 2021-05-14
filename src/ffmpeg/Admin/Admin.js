@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './Admin.scss';
 import Menubar from './Menubar/Menubar';
+import { Toast } from './Toast/Toast';
 
 export default function Admin() {
     useEffect(() => {
@@ -15,6 +16,7 @@ export default function Admin() {
     return (
         <div className="C_Admin">
             <Menubar />
+            <Toast />
         </div>
     )
 }

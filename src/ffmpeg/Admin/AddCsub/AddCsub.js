@@ -133,6 +133,7 @@ export default function AddCsub() {
             setError_Sub(res.data.data);
             // console.log(res);
             loadSubjects();
+            ToastAlert(res.data.data, 'info');
         }).catch(err => {
             // console.log(err);
             setError_Sub('Error to save data');
@@ -165,7 +166,10 @@ export default function AddCsub() {
         }
         else if ('add_cls' === e) {
             // console.log('add_cls', txtCls.current.value);
-            if (txtCls.current.value == '') return;
+            if (txtCls.current.value == '') {
+                ToastAlert('Please provide class name', 'w');
+                return;
+            }
             PostCls({ name: txtCls.current.value, e });
             setTimeout(() => {
                 txtCls.current.value = '';
@@ -196,7 +200,10 @@ export default function AddCsub() {
             PostSub({ id, e });
         }
         else if ('add_sub' === e) {
-            if (txtSub.current.value == '') return;
+            if (txtSub.current.value == '') {
+                ToastAlert('Please provide subject name', 'w');
+                return;
+            }
             PostSub({ name: txtSub.current.value, e });
             setTimeout(() => {
                 txtSub.current.value = '';

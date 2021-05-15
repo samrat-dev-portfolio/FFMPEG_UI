@@ -9,6 +9,7 @@ import './Add.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
+import { ToastAlert } from '../../Toast/Toast';
 
 export default function Add({ onhide, data }) {
     // https://react-select.com/home
@@ -71,6 +72,7 @@ export default function Add({ onhide, data }) {
             axios.post(post_url, body, config).then(res => {
                 setError(res.data.data);
                 setIsLoading(false);
+                ToastAlert(res.data.data, 'i');
                 onhide();
                 // console.log(res);
             }).catch(err => {

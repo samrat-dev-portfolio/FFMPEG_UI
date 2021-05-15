@@ -138,9 +138,11 @@ export default function Home(props) {
         setSelectedSubject(_item.id);
     };
     const click_chapterItem = (_e, _item) => {
+        // console.log(_item);
         setSelectedChapterName(_item.chapterName);
         highlight(_e, 'chapter_highlight');
         if(_item.contentID == null) return;
+        if(_item.contentID == 'NULL') return;
         setPlayerContentID(_item.contentID);
         setPlayerTitle(_item.chapterName);
         setLoadPlayer(true);

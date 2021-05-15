@@ -7,6 +7,7 @@ import Modal from '../Modal/Modal';
 import Loading from '../Loading/Loading';
 import Player from './../Player/Player';
 import Add from '../AddChap/Add/Add';
+import { ToastAlert } from '../Toast/Toast';
 
 export default function Conversion(props) {
     const baseurl = window.ffmpeg_baseurl;
@@ -203,11 +204,11 @@ export default function Conversion(props) {
                 });
         }
         else if ('restore' === e) {
-            setShowModal(true);
+            // setShowModal(true);
             RestoreKey2SD(contentID);
         }
         else if ('remove' === e) {
-            setShowModal(true);
+            // setShowModal(true);
             RemoveKeyFromSD(contentID);
         }
         else if ('delete' === e) {
@@ -234,6 +235,7 @@ export default function Conversion(props) {
         axios.post(`${baseurl}api/mpeg/CreateKey`, body, config).then(res => {
             // console.log(res);
             update_modal('key generated successfully', false);
+            ToastAlert('key generated successfully', 'i');
             callback();
         }).catch(err => {
             console.log(err);
@@ -250,6 +252,7 @@ export default function Conversion(props) {
         }).then(res => {
             // console.log(res);
             update_modal('video file encrypted successfully...', false);
+            ToastAlert('video file encrypted successfully', 'i');
         }).catch(err => {
             console.log(err);
             update_modal(err, false);
@@ -293,8 +296,9 @@ export default function Conversion(props) {
         };
         const body = { Id: contentID };
         axios.post(`${baseurl}api/mpeg/ConversionEnded`, body, config).then(res => {
-            // console.log(res);
+            console.log(res);
             update_modal(res.data.data, false);
+            ToastAlert(res.data.data, 'i');
             callback();
         }).catch(err => {
             console.log(err);
@@ -311,8 +315,9 @@ export default function Conversion(props) {
         const body = { Id: contentID };
         axios.post(`${baseurl}api/mpeg/RestoreKey2SD`, body, config).then(res => {
             // console.log(res);
-            update_modal(res.data.data, false);
-            setShowModalHideBtn(true);
+            // update_modal(res.data.data, false);
+            // setShowModalHideBtn(true);
+            ToastAlert(res.data.data,'i');
         }).catch(err => {
             console.log(err);
             update_modal(err, false);
@@ -330,6 +335,7 @@ export default function Conversion(props) {
         axios.post(`${baseurl}api/mpeg/Deletecontent`, body, config).then(res => {
             setIsLoading(false);
             // console.log(res);
+            ToastAlert(res.data.data,'i');
             loadContent(getContentParams);
         }).catch(err => {
             setError('Error');
@@ -347,8 +353,9 @@ export default function Conversion(props) {
         const body = { Id: contentID };
         axios.post(`${baseurl}api/mpeg/RemoveKeyFromSD`, body, config).then(res => {
             // console.log(res);
-            update_modal(res.data.data, false);
-            setShowModalHideBtn(true);
+            // update_modal(res.data.data, false);
+            // setShowModalHideBtn(true);
+            ToastAlert(res.data.data,'i');
         }).catch(err => {
             console.log(err);
             update_modal(err, false);

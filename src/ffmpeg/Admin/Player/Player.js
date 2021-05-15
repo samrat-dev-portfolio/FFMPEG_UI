@@ -45,12 +45,11 @@ export default function Player({ show, onhide, contentID, chapter }) {
             document.body.offsetHeight;
         if (actualWidth < actualHeight) {
             // console.log('w small');
-            if (typeof playerWrapperRef.current === 'undefined') return;
+            if (typeof playerWrapperRef.current === 'undefined' || playerWrapperRef.current === null) return;
             playerWrapperRef.current.style.width = '90%';
         } else {
             // console.log('h small');
-            if (typeof playerWrapperRef.current === 'undefined') return;
-            if (playerWrapperRef.current === null) return;
+            if (typeof playerWrapperRef.current === 'undefined' || playerWrapperRef.current === null) return;
             let w = ((3 / 4) * actualWidth) - 50;
             playerWrapperRef.current.style.width = w + 'px';
         }
@@ -65,7 +64,12 @@ export default function Player({ show, onhide, contentID, chapter }) {
     }, []);
     useEffect(() => {
         if (contentID === null) return;
-        setM3u8Url(`${baseurl}api/mpeg/M3u8info/${contentID}`);
+        const _params = {
+            baseurl
+        }
+        setM3u8Url(`${baseurl}api/mpeg/M3u8info/${contentID}`,{
+            params: _params
+        });
         Resize();
     }, [show]);
     useEffect(() => {

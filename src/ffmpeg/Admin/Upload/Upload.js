@@ -6,6 +6,7 @@ import './Upload.scss';
 import axios from 'axios';
 import Loading from '../Loading/Loading';
 import { MDBIcon, MDBBtn } from "mdbreact";
+import { ToastAlert } from '../../Admin/Toast/Toast';
 
 export default function Upload() {
     const baseurl = window.ffmpeg_baseurl;
@@ -90,6 +91,7 @@ export default function Upload() {
         const isValid = form.checkValidity();
         if (isValid === false) {
             setError("Please provide all field");
+            ToastAlert("Please provide all field", 'i');
             setIsLoading(false);
         } else {
             console.log("Ready for upload to server");
@@ -115,7 +117,8 @@ export default function Upload() {
                 setError('File uploaded successfully.');
                 setIsLoading(false);
                 ResetAll();
-                console.log('File uploaded successfully.');
+                ToastAlert("File uploaded successfully.", 'i');
+                // console.log('File uploaded successfully.');
                 // console.log(res);
             }).catch(err => {
                 setError('Error post data');

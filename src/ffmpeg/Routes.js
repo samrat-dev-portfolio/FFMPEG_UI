@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Route, Switch, Link } from "react-router-dom";
 // import styled from "styled-components";
 // import { useHistory } from "react-router-dom";
@@ -14,9 +14,9 @@ import AddCsub from "./Admin/AddCsub/AddCsub";
 import AddChap from "./Admin/AddChap/AddChap";
 import Settings from "./Admin/Settings/Settings";
 
-export default function Routes(props) {
+export function Routes(props) {
     return (
-        <>
+        <Fragment>
             <Route path="/" exact>
                 {
                     <Entry />
@@ -33,6 +33,20 @@ export default function Routes(props) {
                 <Route path="/admin/settings" exact component={Settings} />
                 <Route path="/admin/test" exact render={() => { return <h3>Test</h3> }} />
             </Switch>
-        </>
+        </Fragment>
     );
+}
+
+export function RoutesUser() {
+    return (
+        <Fragment>
+            <Route path="/" exact>
+                {
+                    <Entry />
+                }
+            </Route>
+            <Route path="/home" exact component={Home} />
+            <Route path="/admin" exact render={() => { return <h3>This is an user app</h3> }} />
+        </Fragment>
+    )
 }

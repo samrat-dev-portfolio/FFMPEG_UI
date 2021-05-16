@@ -20,6 +20,7 @@ export default function Home(props) {
     const [getLoading_subject, setLoading_subject] = useState({ enabled: false, alert: '' });
     const [getSubjects, setSubjects] = useState([]);
     const [getSelectedSubject, setSelectedSubject] = useState('');
+    const [getSelectedSubjectName, setSelectedSubjectName] = useState('');
 
     const [getLoading_chapter, setLoading_chapter] = useState({ enabled: false, alert: '' });
     const [getChapters, setChapters] = useState([]);
@@ -38,8 +39,9 @@ export default function Home(props) {
             setSelectedClass(cls);
 
         const sub = query.get('sub');
-        if (sub)
+        if (sub) {
             setSelectedSubject(sub);
+        }
 
         const cls_name = query.get('cls_name');
         if (cls_name)
@@ -106,6 +108,11 @@ export default function Home(props) {
                 setLoading_chapter({ enabled: true, alert: 'Error' });
             });
     };
+    const mapSelectedSubjectsName = _id => {
+        let data = getSubjects.find((item, index) => item.id == _id) || {};
+        data = data.subjectName || '';
+            setSelectedSubjectName(data);
+    };
     //#endregion
 
     //#region Create List View
@@ -136,13 +143,14 @@ export default function Home(props) {
     };
     const click_subjectItem = (_item) => {
         setSelectedSubject(_item.id);
+        mapSelectedSubjectsName(_item.id)
     };
     const click_chapterItem = (_e, _item) => {
         // console.log(_item);
         setSelectedChapterName(_item.chapterName);
         highlight(_e, 'chapter_highlight');
-        if(_item.contentID == null) return;
-        if(_item.contentID == 'NULL') return;
+        if (_item.contentID == null) return;
+        if (_item.contentID == 'NULL') return;
         setPlayerContentID(_item.contentID);
         setPlayerTitle(_item.chapterName);
         setLoadPlayer(true);
@@ -155,7 +163,7 @@ export default function Home(props) {
         _target.classList.add(_className);
     };
     const body_blue = () => {
-        // document.body.classList.add('body-blue');
+        document.body.classList.add('body-blue');
     };
     const urlParamCreation = () => {
         props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);
@@ -175,7 +183,7 @@ export default function Home(props) {
     return (
         <>
             <Player chapter={getPlayerTitle} show={getLoadPlayer} contentID={getPlayerContentID} onhide={hidePlayer} />
-            <Header selected_class={getSelectedClassName} selected_chapter={getSelectedChapterName} />
+            <Header selected_class={getSelectedClassName} selected_subject={getSelectedSubjectName} selected_chapter={getSelectedChapterName} />
             <Content
                 my_class={getClasses_view()} loading_class={getLoading_class}
                 my_subject={getSubjects_view()} loading_subject={getLoading_subject}

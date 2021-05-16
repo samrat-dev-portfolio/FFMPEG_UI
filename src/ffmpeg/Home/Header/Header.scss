@@ -2,7 +2,10 @@ body {
     // background-color: #459457;
 }
 .bimg-page-2 {
-    height: 75px;
+    height: 100px;
+    & > div {
+        height: 100%;
+    }
     .gutter {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
@@ -96,20 +99,10 @@ body {
     display: flex;
     align-items: flex-end;
     & > div {
-        padding: .85rem .85rem 0 .85rem;
+        padding: 0.85rem 0.85rem 0 0.85rem;
         display: flex;
-        height: 70%;
+        height: 80%;
         flex: 1;
         font-weight: bold;
-    } 
+    }
 }
-
-
-
-
-
-
-
-
-
-

@@ -2,6 +2,7 @@ body {
     // background-color: #459457;
 }
 .bimg-page-2 {
+    height: 75px;
     .gutter {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
@@ -88,3 +89,27 @@ body {
 .content-box {
     background-clip: content-box;
 }
+.space-4 {
+    margin-top: 1rem;
+}
+.head-details {
+    display: flex;
+    align-items: flex-end;
+    & > div {
+        padding: .85rem .85rem 0 .85rem;
+        display: flex;
+        height: 70%;
+        flex: 1;
+        font-weight: bold;
+    } 
+}
+
+
+
+
+
+
+
+
+
+

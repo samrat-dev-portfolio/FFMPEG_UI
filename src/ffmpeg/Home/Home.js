@@ -155,7 +155,7 @@ export default function Home(props) {
         _target.classList.add(_className);
     };
     const body_blue = () => {
-        document.body.classList.add('body-blue');
+        // document.body.classList.add('body-blue');
     };
     const urlParamCreation = () => {
         props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);

@@ -13,6 +13,7 @@ import Conversion from "./Admin/Conversion/Conversion";
 import AddCsub from "./Admin/AddCsub/AddCsub";
 import AddChap from "./Admin/AddChap/AddChap";
 import Settings from "./Admin/Settings/Settings";
+import Activation from "./Admin/Activation/Activation";
 
 export function Routes(props) {
     return (
@@ -31,6 +32,7 @@ export function Routes(props) {
                 <Route path="/admin/addclsnsub" exact component={AddCsub} />
                 <Route path="/admin/addchap" exact component={AddChap} />
                 <Route path="/admin/settings" exact component={Settings} />
+                <Route path="/admin/activation" exact component={Activation} />
                 <Route path="/admin/test" exact render={() => { return <h3>Test</h3> }} />
             </Switch>
         </Fragment>

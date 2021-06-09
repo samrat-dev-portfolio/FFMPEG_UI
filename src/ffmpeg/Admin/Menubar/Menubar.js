@@ -18,6 +18,7 @@ export default function Menubar() {
                     <Nav.Link href="#admin/addclsnsub">Class-Subs</Nav.Link>
                     <Nav.Link href="#admin/addchap">Chapters</Nav.Link>
                     <Nav.Link href="#admin/settings">Settings</Nav.Link>
+                    <Nav.Link href="#admin/activation">Activation</Nav.Link>
                     {
                         /*
                         <NavDropdown title="Content" id="basic-nav-dropdown">

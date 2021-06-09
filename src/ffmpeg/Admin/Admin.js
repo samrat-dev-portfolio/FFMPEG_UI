@@ -21,7 +21,6 @@ export default function Admin() {
             <div style={{ position: 'relative' }}>
                 <BrandAnimation />
             </div>
-            
         </div>
     )
 }

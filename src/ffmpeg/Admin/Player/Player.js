@@ -61,6 +61,11 @@ export default function Player({ show, onhide, contentID, chapter }) {
         document.body.onresize = () => {
             Resize();
         };
+        document.body.onblur = function () {
+            // console.log('body blur');
+            // onhide();
+           window.location.reload();
+        };
     }, []);
     useEffect(() => {
         if (contentID === null) return;

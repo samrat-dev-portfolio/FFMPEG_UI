@@ -5,7 +5,6 @@ import moment from 'moment';
 import './Activation.scss';
 const log = console.log;
 
-
 export default function Activation() {
   const baseurl = window.ffmpeg_baseurl;
   const [getIsLoading, setIsLoading] = useState(false);

@@ -1,19 +1,11 @@
 import React from 'react'
-import { Route, Switch, Link } from "react-router-dom";
+// import { Route, Switch, Link } from "react-router-dom";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.scss';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 
 export default function Header(props) {
-    const SubjectDetails = styled.span`
-       font-size: smaller;
-       letter-spacing: 1px;
-    `;
-    const ChaptertDetails = styled.span`
-       font-weight: 100;
-       letter-spacing: 1px;
-    `;
     return (
         <Container fluid className="C_Header bimg-page-2 p-0">
             <Row className="gutter m-0">
@@ -24,16 +16,17 @@ export default function Header(props) {
                             <div>
                                 {props.selected_class}
                             </div>
-                            <SubjectDetails>
+                            <span className="subject-details">
                                 {
                                     props.selected_subject ? props.selected_subject : ''
                                 }
-                            </SubjectDetails>
+                            </span>
                         </Col>
                         <Col className="col-8 b-green c-white center-xy d-flex">
-                            <ChaptertDetails>
+                            <span className="chaptert-details">
+
                                 {props.selected_chapter}
-                            </ChaptertDetails>
+                            </span>
                         </Col>
                     </div>
                 </Col>

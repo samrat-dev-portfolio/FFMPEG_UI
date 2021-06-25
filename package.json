@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@y0c/react-datepicker": "^1.0.4",
     "axios": "^0.16.2",
     "bootstrap": "^4.6.0",
     "dexie": "^3.0.3",

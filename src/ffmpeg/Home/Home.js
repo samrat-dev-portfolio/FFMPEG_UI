@@ -28,6 +28,7 @@ export default function Home(props) {
     // Similar to componentDidMount and componentDidUpdate:
     // https://www.digitalocean.com/community/tutorials/react-axios-react
 
+
     //#region Hooks 
     useEffect(() => {
         body_blue();
@@ -111,7 +112,7 @@ export default function Home(props) {
     const mapSelectedSubjectsName = _id => {
         let data = getSubjects.find((item, index) => item.id == _id) || {};
         data = data.subjectName || '';
-            setSelectedSubjectName(data);
+        setSelectedSubjectName(data);
     };
     //#endregion
 
@@ -166,7 +167,11 @@ export default function Home(props) {
         document.body.classList.add('body-blue');
     };
     const urlParamCreation = () => {
-        props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);
+        // props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);
+        const _search = `?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`;
+        props.history.push({
+            search: _search
+        });
     }
     //#endregion
 

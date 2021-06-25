@@ -1,12 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Col, Container, Form, Row, Card, Table, Pagination, Dropdown, ButtonGroup, InputGroup, FormControl } from "react-bootstrap";
+import { ListGroup, Col, Container, Form, Row, Card, Table, Pagination, Dropdown, Modal, InputGroup, FormControl } from "react-bootstrap";
 import Loading from '../Loading/Loading';
 import { MDBIcon, MDBBtn } from "mdbreact";
 import { ToastAlert } from '../../Admin/Toast/Toast';
 import axios from 'axios';
 import moment from 'moment';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'bootstrap-css-only/css/bootstrap.min.css';
+import 'mdbreact/dist/css/mdb.css';
 import './Activation.scss';
+
+import { DatePicker } from '@y0c/react-datepicker';
+import '@y0c/react-datepicker/assets/styles/calendar.scss';
+
 const log = console.log;
+
+//https://reactjsexample.com/tag/date/
+//https://reactjsexample.com/react-datepicker-rangedatepicker-timepicker-component/
+// https://y0c.github.io/react-datepicker/?path=/story/calendar--custom-day-class
+
+// https://edwardfhsiao.github.io/react-picky-date-time/
 
 export default function KeyGenerator() {
   const baseurl = window.ffmpeg_baseurl;
@@ -31,10 +44,13 @@ export default function KeyGenerator() {
     { value: '100', label: '100' }
   ];
   const [getCardBodyShow, setCardBodyShow] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalItems, setModalItems] = useState({});
 
   let LazyKeyupTimer = useRef(null);
   let appIDInput = useRef(null);
   let SKeyInput = useRef(null);
+  let TimeInput = useRef(null);
   let ToggleTarget = useRef(null);
 
   //#region Hooks 
@@ -62,10 +78,14 @@ export default function KeyGenerator() {
   const today = () => {
     return moment().local().format('YYYY-MM-DD HH:mm:ss');
   }
-  const copyKeyGen = () => {
+  const copyKeyGen = (data) => {
     // console.log(getCopyKeyGen);
     var textArea = document.createElement("textarea");
-    textArea.value = JSON.stringify(getCopyKeyGen);
+    if (data) {
+      textArea.value = JSON.stringify(data);
+    } else {
+      textArea.value = JSON.stringify(getCopyKeyGen);
+    }
     document.body.appendChild(textArea);
     // textArea.focus();
     textArea.select();
@@ -102,6 +122,27 @@ export default function KeyGenerator() {
       setIsLoading(false);
     });
   }
+  const RemoveKeyGen = (_appid) => {
+    const config = {
+      headers: {
+        'content-type': 'application/json',
+      }
+    };
+    const body = { LicenceAppId: _appid };
+    setIsLoading(true);
+    axios.post(`${baseurl}api/mpeg/RemoveLicenseKeyGen`, body, config).then(res => {
+      // console.log(res);
+      if (res.data.data)
+        ToastAlert(res.data.data, 's');
+      if (res.data.error)
+        ToastAlert(res.data.error, 'e');
+      setIsLoading(false);
+      LoadAllKeyGens(getKeyGenParams);
+    }).catch(err => {
+      console.log(err);
+      setIsLoading(false);
+    });
+  }
   const LoadAllKeyGens = (_params) => {
     setIsLoading(true);
     axios.get(`${baseurl}api/mpeg/getLicenseKeyGens`, {
@@ -131,10 +172,12 @@ export default function KeyGenerator() {
   };
   const searchByAppID = _appID => {
     SKeyInput.current.value = '';
+    TimeInput.current.value = '';
     LazyKeyup(() => {
       setKeyGenParams(prevData => {
         let data = { ...prevData, "appId": _appID, "pageindex": 0 };
         delete data["serialKey"];
+        delete data["creationDate"];
         LoadAllKeyGens(data);
         return data;
       });
@@ -142,10 +185,39 @@ export default function KeyGenerator() {
   };
   const searchBySKey = _SKey => {
     appIDInput.current.value = '';
+    TimeInput.current.value = '';
+    console.log(0);
     LazyKeyup(() => {
       setKeyGenParams(prevData => {
         let data = { ...prevData, "serialKey": _SKey, "pageindex": 0 };
         delete data["appId"];
+        delete data["creationDate"];
+        LoadAllKeyGens(data);
+        return data;
+      });
+    });
+  };
+  const searchByTimestamp = _timestamp => {
+    // log(TimeInput.current);
+    // if(TimeInput.current) {
+    //   let children = TimeInput.current.querySelectorAll('input');
+    //   log(children);
+    // }
+
+    let creationDate = undefined;
+    if (_timestamp) {
+      let { $d } = _timestamp;
+      creationDate = moment($d).format('YYYY-MM-DD');
+      // console.log('searchByTimestamp', _timestamp, $d);
+    }
+
+    appIDInput.current.value = '';
+    SKeyInput.current.value = '';
+    LazyKeyup(() => {
+      setKeyGenParams(prevData => {
+        let data = { ...prevData, creationDate, "pageindex": 0 };
+        delete data["appId"];
+        delete data["serialKey"];
         LoadAllKeyGens(data);
         return data;
       });
@@ -177,6 +249,21 @@ export default function KeyGenerator() {
       return !prev;
     });
   }
+  const Action_Click = (_item, e) => {
+    const { appId, serialKey } = _item;
+    if ('copy_key' === e) {
+      copyKeyGen({ appId, serialKey });
+    } else if ('delete_key' === e) {
+      if (confirm('are you sure to delete appId')) {
+        RemoveKeyGen(appId);
+      }
+    }
+    else if ('client_info' === e) {
+      setModalItems(_item);
+      setShowModal(true)
+    }
+  };
+  const handleCloseModal = () => setShowModal(false);
 
   return (
     <Container fluid className="C_KeyGenerator">
@@ -199,7 +286,7 @@ export default function KeyGenerator() {
                   <Form.Group controlId="App_ID">
                     <Form.Label>App ID</Form.Label>
                     <MDBIcon icon="redo-alt" className="indigo-text refresh-btn" size="lg" title="Refresh KeyGen" onClick={loadAppID} />
-                    <MDBIcon icon="copy" className="green-text refresh-btn" size="lg" title="Copy KeyGen" onClick={copyKeyGen} />
+                    <MDBIcon icon="copy" className="green-text refresh-btn" size="lg" title="Copy KeyGen" onClick={() => copyKeyGen(null)} />
                     <Form.Control type="text" defaultValue={getAppId} placeholder="App ID" readOnly />
                   </Form.Group>
                   <Form.Group controlId="Serial_Key">
@@ -246,6 +333,22 @@ export default function KeyGenerator() {
                     </InputGroup>
                   </div>
                 </th>
+                <th>
+                  <div className="td-filter-box dt-range">
+                    Timestamp
+                    <InputGroup size="sm" className="" ref={TimeInput}>
+                      <DatePicker
+                        onChange={searchByTimestamp}
+                        placeholder="Search by Timestamp"
+                        showDefaultIcon clear
+                      />
+                    </InputGroup>
+                  </div>
+                </th>
+                <th>
+                  Action
+                  <MDBIcon icon="redo-alt" className="indigo-text refresh-btn" size="lg" title="Refresh All KeyGens" onClick={() => { LoadAllKeyGens(getKeyGenParams) }} />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -254,7 +357,23 @@ export default function KeyGenerator() {
                   return <tr key={index}>
                     <td>{item.appId}</td>
                     <td>{item.serialKey}</td>
-                    <td>{item.creationDate}</td>
+                    <td>
+                      {item.creationDate}
+                      {item.deviceId ? <MDBIcon icon="check" className="green-text activated" title="Activated"/> : null}
+                    </td>
+                    <td className="actions">
+                      <div>
+                        <button title="edit Class" className="btnEdit" type="button" onClick={() => Action_Click(item, 'copy_key')}>
+                          <MDBIcon size="lg" icon="copy" className="green-text" title="Copy KeyGen" />
+                        </button>
+                        <button title="Client Info" className="" type="button" onClick={() => Action_Click(item, 'client_info')}>
+                          <MDBIcon size="lg" icon="sticky-note indigo-text" />
+                        </button>
+                        <button title="Delete Key" className="btnDelete" type="button" onClick={() => Action_Click(item, 'delete_key')}>
+                          <MDBIcon size="lg" icon="trash-alt mdb-gallery-view-icon" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>;
                 })
               }
@@ -265,6 +384,22 @@ export default function KeyGenerator() {
           <Pagination size="sm">{getPageItems}</Pagination>
         </Col>
       </Row>
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Client Information</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-0 client-info">
+          <ListGroup>
+            <ListGroup.Item><span className="lbl">App Id:</span> {modalItems.appId}</ListGroup.Item>
+            <ListGroup.Item><span className="lbl">Serial Key:</span> {modalItems.serialKey}</ListGroup.Item>
+            <ListGroup.Item><span className="lbl">Creation Date:</span> {modalItems.creationDate}</ListGroup.Item>
+            <ListGroup.Item><span className="lbl">Device Id:</span> {modalItems.deviceId}</ListGroup.Item>
+            <ListGroup.Item><span className="lbl">Machine Name:</span> {modalItems.machineName}</ListGroup.Item>
+            <ListGroup.Item><span className="lbl">Client Name:</span> {modalItems.clientName}</ListGroup.Item>
+            <ListGroup.Item><span className="lbl">Description:</span> {modalItems.description}</ListGroup.Item>
+          </ListGroup>
+        </Modal.Body>
+      </Modal>
     </Container>
   )
 }

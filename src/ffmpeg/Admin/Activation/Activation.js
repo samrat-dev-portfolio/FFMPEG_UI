@@ -1,11 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Col, Container, Form, Row, Card, ProgressBar } from "react-bootstrap";
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import moment from 'moment';
 import './Activation.scss';
 const log = console.log;
 
 export default function Activation() {
+  const { activation } = useSelector(state => state);
+  const dispatch = useDispatch();
+  const setActivation = () => {
+    dispatch({
+      type: 'SET_ACTIVATION',
+      payload: !activation.isActivate
+    });
+  }
+
   const baseurl = window.ffmpeg_baseurl;
   const [getIsLoading, setIsLoading] = useState(false);
   const [getError, setError] = useState('');
@@ -59,7 +69,8 @@ export default function Activation() {
       console.log(res);
     }).catch(err => {
       // console.log(JSON.stringify(err));
-      console.log(err.response.statusText);
+      let status = (err.response || {}).statusText || '';
+      console.log(status);
       setIsLoading(false);
     });
 
@@ -90,9 +101,9 @@ export default function Activation() {
               ValidTo: {getValidTo}
             </li>
           </ul>
-          <button onClick={AuthGetToken}>AuthGetToken</button>
-          &nbsp;
-          <button onClick={() => AdminData(getToken)}>IsAuth</button>
+          <button onClick={setActivation}>setActivation</button>
+          <p>{activation.isActivate ? 'Activated' : 'Please Activate'}</p>
+
         </Col>
       </Row>
     </Container>

@@ -1,6 +1,7 @@
 const initialState = {
     isAuth: false,
-    name: 'Samrat'
+    isActivate: false,
+    loggedInUser: null,
 };
 export function ActivationReducer(state = initialState, action) {
     switch (action.type) {
@@ -8,6 +9,16 @@ export function ActivationReducer(state = initialState, action) {
             return {
                 ...state,
                 isAuth: action.payload
+            }
+        case 'SET_ACTIVATION':
+            return {
+                ...state,
+                isActivate: action.payload
+            }
+        case 'SET_USER':
+            return {
+                ...state,
+                loggedInUser: action.payload
             }
         default:
             return state;

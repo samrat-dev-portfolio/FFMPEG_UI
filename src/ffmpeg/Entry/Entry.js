@@ -11,35 +11,36 @@ import 'mdbreact/dist/css/mdb.css';
 
 export default function Entry(props) {
     const { activation } = useSelector(state => state);
-    const dispatch = useDispatch();
-    const setAuth = () => {
-        dispatch({
-            type: 'SET_AUTH',
-            payload: !activation.isAuth
-        });
-    }
+
     return (
         <Container fluid className="C_Entry bimg-page-1">
             <Row className="h-100">
                 <Col className="col-9">
-                    <input type="button" value="SetAuth" onClick={setAuth} />
+
                 </Col>
                 <Col className="col-3 p-0">
                     <div className="home_btn_row">
                         {
-                            activation.isAuth ?
-                                <Link className="home_btn" to="/home">
-                                    <MDBBtn color="amber" className="indigo-text">
-                                        Enter
-                                        <MDBIcon size="lg" icon="caret-right" className="ml-2" />
+                            !activation.isActivate ?
+                                <Link className="home_btn" to="/activation">
+                                    <MDBBtn color="success" className="">
+                                        Activate
+                                        <MDBIcon size="lg" icon="shield-alt" className="ml-2" />
                                     </MDBBtn>
                                 </Link> :
-                                <Link className="home_btn" to="/login">
-                                    <MDBBtn color="dark">
-                                        Login
-                                        <MDBIcon size="lg" icon="sign-in-alt" className="ml-2" />
-                                    </MDBBtn>
-                                </Link>
+                                !activation.isAuth ?
+                                    <Link className="home_btn" to="/login">
+                                        <MDBBtn color="dark">
+                                            Login
+                                            <MDBIcon size="lg" icon="sign-in-alt" className="ml-2" />
+                                        </MDBBtn>
+                                    </Link> :
+                                    <Link className="home_btn" to="/home">
+                                        <MDBBtn color="amber" className="indigo-text">
+                                            Enter
+                                            <MDBIcon size="lg" icon="caret-right" className="ml-2" />
+                                        </MDBBtn>
+                                    </Link>
                         }
                     </div>
                 </Col>

@@ -1,10 +1,14 @@
 const initialState = {
-    isAuth: false
+    isAuth: false,
+    name: 'Samrat'
 };
 export function ActivationReducer(state = initialState, action) {
-    switch(action.type) {
+    switch (action.type) {
         case 'SET_AUTH':
-            return action.payload;
+            return {
+                ...state,
+                isAuth: action.payload
+            }
         default:
             return state;
     }

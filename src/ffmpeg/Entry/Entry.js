@@ -15,16 +15,14 @@ export default function Entry(props) {
     const setAuth = () => {
         dispatch({
             type: 'SET_AUTH',
-            payload: {
-                isAuth: !activation.isAuth
-            }
+            payload: !activation.isAuth
         });
     }
     return (
         <Container fluid className="C_Entry bimg-page-1">
             <Row className="h-100">
                 <Col className="col-9">
-                  <input type="button" value="SetAuth" onClick={setAuth} />
+                    <input type="button" value="SetAuth" onClick={setAuth} />
                 </Col>
                 <Col className="col-3 p-0">
                     <div className="home_btn_row">

@@ -1,6 +1,6 @@
 const initialState = {
+    isActivate: !false,
     isAuth: false,
-    isActivate: false,
     loggedInUser: null,
 };
 export function ActivationReducer(state = initialState, action) {

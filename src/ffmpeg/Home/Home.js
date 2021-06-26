@@ -51,6 +51,8 @@ export default function Home(props) {
         if (chap_name) {
             setSelectedChapterName(chap_name);
         }
+
+        return body_blue_reset;
     }, []);
     useEffect(() => {
         urlParamCreation();
@@ -166,6 +168,9 @@ export default function Home(props) {
     const body_blue = () => {
         document.body.classList.add('body-blue');
     };
+    const body_blue_reset = () => {
+        document.body.classList.remove('body-blue');
+    };
     const urlParamCreation = () => {
         // props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);
         const _search = `?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`;
@@ -193,6 +198,7 @@ export default function Home(props) {
                 my_class={getClasses_view()} loading_class={getLoading_class}
                 my_subject={getSubjects_view()} loading_subject={getLoading_subject}
                 my_chapter={getChapters_view()} loading_chapter={getLoading_chapter}
+                isAuth
             />
         </>
     )

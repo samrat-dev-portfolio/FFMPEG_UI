@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react'
-// import { Route, Switch, Link } from "react-router-dom";
+import { Route, Switch, Link, useHistory } from "react-router-dom";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { MDBIcon } from "mdbreact";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'mdbreact/dist/css/mdb.css';
 import './Content.scss';
 import ProgressAlert from '../ProgressAlert/ProgressAlert';
 
 export default function Content(props) {
+    const history = useHistory();
+
+    const Leave = () => {
+        // console.log(history);
+        history.push("/");
+    };
 
     return (
         <Container fluid className="C_Content bimg-page-2 p-0">
@@ -20,7 +29,7 @@ export default function Content(props) {
                         </Col>
                         <Col className="col-7 pl-4">
                             Adhay Suchi
-                         </Col>
+                        </Col>
                     </Row>
                 </Col>
                 <Col className="col-12 b-red b-radius-2 space-3">
@@ -58,8 +67,11 @@ export default function Content(props) {
                         </Col>
                     </Row>
                 </Col>
+                <Button variant="dark" size="sm" onClick={Leave}>
+                    <MDBIcon icon="angle-double-left" className="sign-in mr-1" size="lg" />
+                    Leave
+                </Button>
             </Row>
-
         </Container>
     )
 }

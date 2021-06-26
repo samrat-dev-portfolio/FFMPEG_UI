@@ -6,13 +6,7 @@ import { Toast } from './Toast/Toast';
 
 export default function Admin() {
     useEffect(() => {
-        body_blue_reset();
     });
-
-    const body_blue_reset = () => {
-        document.body.classList.remove('body-blue');
-        document.body.classList.add('body-white');
-    };
 
     return (
         <div className="C_Admin">

@@ -15,6 +15,7 @@ import AddChap from "./Admin/AddChap/AddChap";
 import Settings from "./Admin/Settings/Settings";
 // import Activation from "./Admin/Activation/Activation";
 import KeyGenerator from './Admin/Activation/KeyGenerator';
+import Login from "./Admin/Activation/Login";
 
 export function Routes(props) {
     return (
@@ -34,6 +35,7 @@ export function Routes(props) {
                 <Route path="/admin/addchap" exact component={AddChap} />
                 <Route path="/admin/settings" exact component={Settings} />
                 <Route path="/admin/keygen" exact component={KeyGenerator} />
+                <Route path="/login" exact component={Login} />
                 <Route path="/admin/test" exact render={() => { return <h3>Test</h3> }} />
             </Switch>
         </Fragment>

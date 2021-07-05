@@ -1,5 +1,5 @@
 const initialState = {
-    isActivate: !false,
+    isActivate: false,
     isAuth: false,
     loggedInUser: null,
 };

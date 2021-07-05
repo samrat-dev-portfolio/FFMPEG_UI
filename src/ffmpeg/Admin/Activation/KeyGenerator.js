@@ -394,7 +394,6 @@ export default function KeyGenerator() {
             <ListGroup.Item><span className="lbl">Serial Key:</span> {modalItems.serialKey}</ListGroup.Item>
             <ListGroup.Item><span className="lbl">Creation Date:</span> {modalItems.creationDate}</ListGroup.Item>
             <ListGroup.Item><span className="lbl">Device Id:</span> {modalItems.deviceId}</ListGroup.Item>
-            <ListGroup.Item><span className="lbl">Machine Name:</span> {modalItems.machineName}</ListGroup.Item>
             <ListGroup.Item><span className="lbl">Client Name:</span> {modalItems.clientName}</ListGroup.Item>
             <ListGroup.Item><span className="lbl">Description:</span> {modalItems.description}</ListGroup.Item>
           </ListGroup>

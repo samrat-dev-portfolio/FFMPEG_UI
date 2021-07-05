@@ -11,6 +11,7 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 
 import Dexie from 'dexie';
+import { GetFFMPEGLocalStorageData, SetFFMPEGLocalStorageData } from '../Toast/LocalStorage';
 
 function Login(props) {
     const { activation } = useSelector(state => state);
@@ -22,32 +23,29 @@ function Login(props) {
         });
     }
 
-    // set database
-    const db = new Dexie('ffmpeg');
-    // create  database store
-    db.version(1).stores({ posts: "title, content, file" });
-    db.open().catch(err => {
-        console.log(err);
-    });
+    const getDB = async () => {
+        console.log('getDB');
+        let allPosts = await GetFFMPEGLocalStorageData();
+        console.log(allPosts);
+    };
 
     const setIndexDBData = async () => {
         console.log('setIndexDBData');
         // db.posts.delete(id);
-        let allPosts = await db.posts.toArray();
-        console.log(allPosts);
+        // let allPosts = await db.ffmpegLocalStorage.toArray();
+        // console.log(allPosts);
 
-        let post = {
-            title: 'title 01',
-            content: 'content 01',
-            file: 'file 01',
+        let data = {
+            key: '123',
+            value: { name: 'Suman', age: 20 },
         };
-        // const result = await db.posts.add(post);
+        await SetFFMPEGLocalStorageData(data.key, data.value);
 
         let postUpdated = {
             content: 'content 01 updated',
             file: 'file 01 updated',
         };
-        const result = await db.posts.update('title 01', postUpdated);
+        // const result = await db.ffmpegLocalStorage.update('title 01', postUpdated);
 
     }
 
@@ -57,7 +55,8 @@ function Login(props) {
                 <Col className="col-9 mt-3" style={{ border: '1px dashed red' }}>
                     <h2> login form</h2>
                     <input type="button" value="SetAuth" onClick={setAuth} /> &nbsp;
-                    <input type="button" value="setIndexDBData" onClick={setIndexDBData} />
+                    <input type="button" value="setIndexDBData" onClick={setIndexDBData} /> &nbsp;
+                    <input type="button" value="getDB" onClick={getDB} />
                     <p>{activation.isAuth ? 'Authenticated' : 'Please login'}</p>
                 </Col>
             </Row>

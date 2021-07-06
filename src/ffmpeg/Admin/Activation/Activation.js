@@ -17,12 +17,13 @@ export default function Activation() {
   const dispatch = useDispatch();
   const history = useHistory();
   const baseurl = window.ffmpeg_baseurl;
- 
+
   useEffect(() => {
     loadDeviceID();
+    GetRemoteUrl();
   }, []);
 
-  //#region auth section 
+  //#region auth section and demo fn
   const [getToken, setToken] = useState('');
   const [getValidFrom, setValidFrom] = useState('');
   const [getValidTo, setValidTo] = useState('');
@@ -82,25 +83,37 @@ export default function Activation() {
     }
     return dt;
   }
-  //#endregion
-  
-  const [getIsLoading, setIsLoading] = useState(false);
-  const [getAppId, setAppId] = useState('');
-  const [getSerialKey, setSerialKey] = useState('');
-  const [getDeviceId, setDeviceId] = useState('');
-  const [getClientName, setClientName] = useState('');
-  const [getDesc, setDesc] = useState('');
-  
+  const IsolatedStorage_ReadAppId = () => {
+    setIsLoading(true);
+    axios.get(`${baseurl}api/mpeg/IsolatedStorage_ReadAppId`)
+      .then(res => {
+        setIsLoading(false);
+        console.log(res.data);
+      }).catch(err => {
+        ToastAlert("Error load IsolatedStorage_ReadAppId", 'e');
+        setIsLoading(false);
+      });
+  };
   const setActivation = () => {
     dispatch({
       type: 'SET_ACTIVATION',
       payload: true
       // payload: !activation.isActivate
     });
-  }
+  };
+  //#endregion
+
+  const [getIsLoading, setIsLoading] = useState(false);
+  const [getAppId, setAppId] = useState('');
+  const [getSerialKey, setSerialKey] = useState('');
+  const [getDeviceId, setDeviceId] = useState('');
+  const [getClientName, setClientName] = useState('');
+  const [getDesc, setDesc] = useState('');
+  const [remoteUrl, setRemoteUrl] = useState('');
+
   const today = () => {
     return moment().local().format('YYYY-MM-DD HH:mm:ss');
-  }
+  };
   const loadDeviceID = () => {
     setIsLoading(true);
     axios.post(`${baseurl}api/mpeg/DeviceInfo`)
@@ -113,6 +126,23 @@ export default function Activation() {
         setIsLoading(false);
       });
   };
+  const GetRemoteUrl = () => {
+    setIsLoading(true);
+    axios.get(`${baseurl}api/mpeg/GetRemoteUrl`)
+      .then(res => {
+        // console.log(res.data);
+        if (res.data.data) {
+          let url = res.data.data[0].url || '';
+          var patt = new RegExp("[/]$");
+          var hasSlash = patt.test(url);
+          if (!hasSlash) {
+            url = `${url}/`;
+          }
+          setRemoteUrl(url);
+        }
+      }).catch(err => {
+      });
+  };
   const handleSubmit = () => {
     const config = {
       headers: {
@@ -120,33 +150,48 @@ export default function Activation() {
       }
     };
     const body = {
-      LicenceAppId: getAppId,
-      LicenceKey: getSerialKey,
-      DeviceId: getDeviceId,
-      ClientName: getClientName,
-      Desc: getDesc,
+      appId: getAppId,
+      serialKey: getSerialKey,
+      deviceId: getDeviceId,
+      clientName: getClientName,
+      description: getDesc,
       activationDate: today()
     };
-    console.log(body);
-    setActivation();
-    history.push('/');
-    // setIsLoading(true);
-    // axios.post(`${baseurl}api/mpeg/AddLicenseKeyGen`, body, config).then(res => {
-    //   // console.log(res);
-    //   if (res.data.data)
-    //     ToastAlert(res.data.data, 's');
-    //   if (res.data.error)
-    //     ToastAlert(res.data.error, 'e');
-    //   setIsLoading(false);
-    //   setDisabledRegister(true);
-    //   LoadAllKeyGens(getKeyGenParams);
-    // }).catch(err => {
-    //   console.log(err);
-    //   setIsLoading(false);
-    // });
-  }
-  // const pasteData = (type) => {
-  // }
+    // console.log(body);
+    setIsLoading(true);
+    axios.post(`${remoteUrl}api/mpeg/KeyActivation`, body, config).then(res => {
+      setIsLoading(false);
+      // console.log(res);
+      if (res.data.data) {
+        ToastAlert(res.data.data, 's');
+        KeyActivationClient(body, config);
+      }
+      if (res.data.error)
+        ToastAlert(res.data.error, 'e');
+      if (res.data.error_data)
+        ToastAlert(res.data.error_data, 's');
+    }).catch(err => {
+      console.log(err);
+      setIsLoading(false);
+    });
+  };
+  const KeyActivationClient = (body, config) => {
+    setIsLoading(true);
+    axios.post(`${baseurl}api/mpeg/KeyActivationClient`, body, config).then(res => {
+      setIsLoading(false);
+      // console.log(res);
+      if (res.data.data) {
+        setTimeout(() => {
+          history.push('/');
+        }, 2000);
+      }
+      if (res.data.error)
+        ToastAlert(res.data.error, 'e');
+    }).catch(err => {
+      console.log(err);
+      setIsLoading(false);
+    });
+  };
 
   return (
     <div className="C_Activation">
@@ -189,6 +234,7 @@ export default function Activation() {
                   <MDBBtn type="button" color="indigo" size="sm" onClick={handleSubmit} >
                     <MDBIcon icon="save" />&nbsp;&nbsp;Activate
                   </MDBBtn>
+                  <button type="button" onClick={IsolatedStorage_ReadAppId}>IsolatedStorage_ReadAppId</button>
                 </Form>
               </Card.Body>
             </Card>

@@ -7,20 +7,28 @@ const ffmpegLocalStorageDb = () => {
         console.log(err);
     });
     return ffmpegLocalStorageDb;
-}
-
-export const GetFFMPEGLocalStorageData = async () => {
+};
+export const GetFFMPEGLocalData = async () => {
     return await ffmpegLocalStorageDb().ffmpegLocalStorage.toArray();
 };
-
-export const SetFFMPEGLocalStorageData = async (ffmpeg_key, value) => {
-    console.log('SetFFMPEGLocalStorageData');
+export const GetFFMPEGLocalDataByKey = async (key) => {
+    return await ffmpegLocalStorageDb().ffmpegLocalStorage.where('ffmpeg_key').equals(key).toArray();
+};
+export const SetFFMPEGLocalData = async (key, value) => {
     let data = {
-        ffmpeg_key,
+        ffmpeg_key: key,
         value
     };
     return await ffmpegLocalStorageDb().ffmpegLocalStorage.add(data);
-}
-
+};
+export const PutFFMPEGLocalData = async (key, value) => {
+    let data = {
+        value
+    };
+    return await ffmpegLocalStorageDb().ffmpegLocalStorage.where('ffmpeg_key').equals(key).modify(data);
+};
+export const DeleteFFMPEGLocalData = async (key) => {
+    return await ffmpegLocalStorageDb().ffmpegLocalStorage.where('ffmpeg_key').equals(key).delete();
+};
 
 export default ffmpegLocalStorageDb;

@@ -83,17 +83,6 @@ export default function Activation() {
     }
     return dt;
   }
-  const IsolatedStorage_ReadAppId = () => {
-    setIsLoading(true);
-    axios.get(`${baseurl}api/mpeg/IsolatedStorage_ReadAppId`)
-      .then(res => {
-        setIsLoading(false);
-        console.log(res.data);
-      }).catch(err => {
-        ToastAlert("Error load IsolatedStorage_ReadAppId", 'e');
-        setIsLoading(false);
-      });
-  };
   const setActivation = () => {
     dispatch({
       type: 'SET_ACTIVATION',
@@ -234,7 +223,6 @@ export default function Activation() {
                   <MDBBtn type="button" color="indigo" size="sm" onClick={handleSubmit} >
                     <MDBIcon icon="save" />&nbsp;&nbsp;Activate
                   </MDBBtn>
-                  <button type="button" onClick={IsolatedStorage_ReadAppId}>IsolatedStorage_ReadAppId</button>
                 </Form>
               </Card.Body>
             </Card>

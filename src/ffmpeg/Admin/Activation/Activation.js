@@ -83,13 +83,13 @@ export default function Activation() {
     }
     return dt;
   }
-  const setActivation = () => {
-    dispatch({
-      type: 'SET_ACTIVATION',
-      payload: true
-      // payload: !activation.isActivate
-    });
-  };
+  // const setActivation = () => {
+  //   dispatch({
+  //     type: 'SET_ACTIVATION',
+  //     payload: true
+  //     // payload: !activation.isActivate
+  //   });
+  // };
   //#endregion
 
   const [getIsLoading, setIsLoading] = useState(false);

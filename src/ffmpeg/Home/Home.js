@@ -7,6 +7,8 @@ import './Home.scss';
 import Content from './Content/Content';
 import axios from 'axios';
 import Player from '../Admin/Player/Player';
+import CheckIsActivated from '../Admin/Activation/CheckIsActivated';
+import { Toast } from '../Admin/Toast/Toast';
 
 export default function Home(props) {
     const baseurl = window.ffmpeg_baseurl;
@@ -174,7 +176,7 @@ export default function Home(props) {
     const urlParamCreation = () => {
         // props.history.push(`/home?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`);
         const _search = `?cls=${getSelectedClass}&sub=${getSelectedSubject}&cls_name=${getSelectedClassName}&chap_name=${getSelectedChapterName}`;
-        props.history.push({
+        props.history.replace({
             search: _search
         });
     }
@@ -192,6 +194,8 @@ export default function Home(props) {
     //#endregion
     return (
         <>
+        <Toast />
+            <CheckIsActivated />
             <Player chapter={getPlayerTitle} show={getLoadPlayer} contentID={getPlayerContentID} onhide={hidePlayer} />
             <Header selected_class={getSelectedClassName} selected_subject={getSelectedSubjectName} selected_chapter={getSelectedChapterName} />
             <Content

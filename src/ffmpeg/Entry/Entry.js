@@ -2,52 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { Route, Switch, Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Col, Container, Row } from "react-bootstrap";
-import axios from 'axios';
+// import axios from 'axios';
+// import moment from 'moment';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Entry.scss';
 import { MDBIcon, MDBBtn } from "mdbreact";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
-import IsActivated from '../Admin/Activation/IsActivated';
 import { ToastAlert, Toast } from '../Admin/Toast/Toast';
+import CheckIsActivated from './../Admin/Activation/CheckIsActivated';
 
 export default function Entry(props) {
     const { activation } = useSelector(state => state);
-    const baseurl = window.ffmpeg_baseurl;
-    const [getIsLoading, setIsLoading] = useState(false);
-    const dispatch = useDispatch();
+    // const baseurl = window.ffmpeg_baseurl;
+    // const dispatch = useDispatch();
+    // const history = useHistory();
 
     useEffect(() => {
-        CheckIsActivated();
+       
     }, []);
 
-    const CheckIsActivated = async () => {
-        const res = await IsActivated(baseurl);
-        // console.log(res.data);
-        const activated = res.data.activated || false;
-        const activated_alert = res.data.data || "";
-        dispatch({
-            type: 'SET_ACTIVATION',
-            payload: activated
-        });
-        if (!activated) {
-            ToastAlert(activated_alert, 'w');
-        }
-    };
- 
     return (
         <Container fluid className="C_Entry bimg-page-1">
-            <Toast />
+            <CheckIsActivated />
             <Row className="h-100">
                 <Col className="col-9">
-                    <button type="button" hidden>IsolatedStorage_ReadAppId</button> <br />
                 </Col>
                 <Col className="col-3 p-0">
                     <div className="home_btn_row">
                         {
                             !activation.isActivate ?
-                                <Link className="home_btn" to="/activation">
+                                !activation.loading_CheckActivation && <Link className="home_btn" to="/activation">
                                     <MDBBtn color="success" className="">
                                         Activate
                                         <MDBIcon size="lg" icon="shield-alt" className="ml-2" />

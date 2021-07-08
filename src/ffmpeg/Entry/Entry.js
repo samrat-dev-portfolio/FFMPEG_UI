@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Route, Switch, Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Col, Container, Row } from "react-bootstrap";
@@ -12,6 +12,7 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import { ToastAlert, Toast } from '../Admin/Toast/Toast';
 import CheckIsActivated from './../Admin/Activation/CheckIsActivated';
+import ProgressAlert from '../Home/ProgressAlert/ProgressAlert';
 
 export default function Entry(props) {
     const { activation } = useSelector(state => state);
@@ -20,11 +21,12 @@ export default function Entry(props) {
     // const history = useHistory();
 
     useEffect(() => {
-       
+
     }, []);
 
     return (
         <Container fluid className="C_Entry bimg-page-1">
+            {activation.loading_CheckActivation ? <ProgressAlert alert="Loading..." /> : null}
             <CheckIsActivated />
             <Row className="h-100">
                 <Col className="col-9">
